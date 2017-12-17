@@ -38,6 +38,21 @@
 
       gtag('config', 'UA-110092286-1');
     </script>
+	<script>
+	/**
+	* Function that tracks a click on an outbound link in Analytics.
+	* This function takes a valid URL string as an argument, and uses that URL string
+	* as the event label. Setting the transport method to 'beacon' lets the hit be sent
+	* using 'navigator.sendBeacon' in browser that support it.
+	*/
+	var trackOutboundLink = function(url) {
+	   ga('send', 'event', 'outbound', 'click', url, {
+		 'transport': 'beacon',
+		 'hitCallback': function(){document.location = url;}
+	   });
+	}
+	</script>
+	
 </head>
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
@@ -103,7 +118,12 @@
                 <h2>Overview</h2>
                 <p>NanoSat MO Framework is an advanced software framework for nanosatellites based on <a href="https://www.youtube.com/watch?v=XdGeaJE7yEk">CCSDS Mission Operations services</a>.</p>
                 <p>It introduces the concept of apps in space that can be started and stopped from ground. Apps can retrieve data from the platform through a set of well-defined MO services. Many possibilities for extensions are available due to its modular and flexible design approach which is not limited to the space segment but extends down to ground by providing all the building blocks for a complete and free end-to-end solution. The research was carried by Graz University of Technology in partnership with the European Space Agency.</p>
-				<p><a href="https://nanosat-mo-framework.github.io/SDK/version_1/test.txt" onClick=”_gaq.push([‘SDK_Downloaded’, ‘downloads’, ‘click’, ‘SDK’, ‘0’]);”>Click here to download the SDK</a></p>
+				<p><a href="https://nanosat-mo-framework.github.io/SDK/version_1/test.txt" onClick=”_gaq.push(['send', 'downloads', 'click', 'SDK', '0']);”>Click here to download the SDK</a></p>
+
+				<p><a href="https://nanosat-mo-framework.github.io/SDK/version_1/test.txt" onclick="trackOutboundLink('https://nanosat-mo-framework.github.io/SDK/version_1/test.txt'); return false;">https://nanosat-mo-framework.github.io/SDK/version_1/test.txt</a></p>
+
+				<p><a href="http://www.example.com" onclick="trackOutboundLink('http://www.example.com'); return false;">Check out example.com</a></p>
+				
 				<img src="img/logo_tu_graz3.png" width="40%" height="40%"><img src="img/img_screenlogo_white.gif">
             </div>
         </div>
