@@ -1,26 +1,52 @@
-# [Start Bootstrap](http://startbootstrap.com/) - [Grayscale](http://startbootstrap.com/template-overviews/grayscale/)
+noSat MO Framework
+This repository contains a website with fundamental information for learning
+more about  the [NanoSat MO Framework], a software framework for nanosatellites
+based on CCSDS Mission Operations services.
 
-[Grayscale](http://startbootstrap.com/template-overviews/grayscale/) is a multipurpose, one page HTML theme for [Bootstrap](http://getbootstrap.com/) created by [Start Bootstrap](http://startbootstrap.com/). This template features various content sections and a Google Maps section with a custom map marker.
+The NanoSat MO Framework introduces the concept of apps in space that can be
+started and stopped from ground. Apps can retrieve data from the platform
+through a set of well-defined MO services. Many possibilities for extensions
+are available due to its modular and flexible design approach which is not
+limited to the space segment but extends down to ground by providing all the
+building blocks for a complete and free end-to-end solution.
 
-## Getting Started
+A Software Development Kit (SDK) is available in order to facilitate the
+development with the [NanoSat MO Framework].
 
-To use this template, choose one of the following options to get started:
-* Download the latest release on Start Bootstrap
-* Fork this repository on GitHub
+Wikipedia page: https://en.wikipedia.org/wiki/NanoSat_MO_Framework
 
-## Bugs and Issues
+Documentation: https://nanosat-mo-framework.readthedocs.io/en/latest/
 
-Have a bug or an issue with this template? [Open a new issue](https://github.com/IronSummitMedia/startbootstrap-grayscale/issues) here on GitHub or leave a comment on the [template overview page at Start Bootstrap](http://startbootstrap.com/template-overviews/grayscale/).
+Interfaces of the services: https://dmarszk.github.io/MOWebViewer4NMF/
 
-## Creator
+Research Work Dissertation: https://www.researchgate.net/publication/321825076
 
-Start Bootstrap was created by and is maintained by **David Miller**, Managing Parter at [Iron Summit Media Strategies](http://www.ironsummitmedia.com/).
+[![][ESAImage]][website]
 
-* https://twitter.com/davidmillerskt
-* https://github.com/davidtmiller
+The research was carried by Graz University of Technology in partnership with
+the European Space Agency.
 
-Start Bootstrap is based on the [Bootstrap](http://getbootstrap.com/) framework created by [Mark Otto](https://twitter.com/mdo) and [Jacob Thorton](https://twitter.com/fat).
+# Release
+The latest NMF SDK release can be downloaded in [Releases]. However, the
+currently recommended distribution channel is directly from Git repository.
 
-## Copyright and License
+# Source Code
+The source code of the NanoSat MO Framework can be found on [GitHub].
 
-Copyright 2013-2015 Iron Summit Media Strategies, LLC. Code released under the [Apache 2.0](https://github.com/IronSummitMedia/startbootstrap-grayscale/blob/gh-pages/LICENSE) license.
+# Bugs Reporting
+Bug Reports can be submitted on: [Bug Reports]
+
+Or directly in the source code repository on [GitHub].
+
+# License
+The NanoSat MO Framework is **licensed** under the **[European Space Agency Public License - v2.0]**.
+
+[![][ESAImage]][website]
+
+[ESAImage]: http://www.esa.int/esalogo/images/logotype/img_colorlogo_darkblue.gif
+[European Space Agency Public License - v2.0]: https://github.com/esa/CCSDS_MO_TRANS/blob/master/LICENCE.md
+[GitHub]: https://github.com/esa/nanosat-mo-framework/
+[Releases]: https://github.com/esa/nanosat-mo-framework/releases
+[Bug Reports]: https://github.com/esa/nanosat-mo-framework/issues
+[website]: http://www.esa.int/
+[NanoSat MO Framework]: https://nanosat-mo-framework.github.io/
