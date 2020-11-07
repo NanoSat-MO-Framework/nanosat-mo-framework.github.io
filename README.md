@@ -1,4 +1,4 @@
-noSat MO Framework
+NanoSat MO Framework
 This repository contains a website with fundamental information for learning
 more about  the [NanoSat MO Framework], a software framework for nanosatellites
 based on CCSDS Mission Operations services.
