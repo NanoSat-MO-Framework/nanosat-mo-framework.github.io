@@ -1,0 +1,362 @@
+/*!
+ * Start Bootstrap - Modern Business (https://startbootstrap.com/template-overviews/modern-business)
+ * Copyright 2013-2017 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-logomodern-business-nav/blob/master/LICENSE)
+ */
+
+body {
+  padding-top: 54px;
+  color:#4a4a4a;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
+
+@media (min-width: 992px) {
+  body {
+    padding-top: 56px;
+  }
+}
+
+.carousel-item {
+  height: 60vh;
+  min-height: 100px;
+  background: no-repeat center center scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.portfolio-item {
+  margin-bottom: 30px;
+}
+
+.youtube-maxs {
+  max-width: 640px;
+  max-height: 360px;
+}
+
+.totals-container {
+    padding-top: 8px;
+    padding-right: 20px;
+    padding-bottom: 16px;
+    padding-left: 20px;
+	display: table;
+}
+
+.totals-row {
+	box-sizing: border-box;
+	display: block;
+}
+
+.totals-row-label {
+	float: left;
+	display: block;
+}
+
+.totals-row-data {
+	float: right;
+	display: block;
+}
+
+.index-jumbo-color {
+	background:url(/img/new_launch.jpg) center 0;
+	background-size:cover;
+	background-size:auto 100%;
+	box-sizing: border-box;
+}
+
+.index-space-earth {
+	background:url(/img/space_earth.jpg) center 0;
+	background-size:cover;
+	box-sizing: border-box;
+}
+
+.index-blue-banner {
+	background:url(/img/banner-bg.png) center 0;
+	background-size:cover;
+	box-sizing: border-box;
+}
+
+.top-banner-features {
+	background:url(/img/sky_flight.jpg) center 0;
+	background-size:cover;
+	box-sizing: border-box;
+}
+
+.about-jumbo-color {
+	background:url(/img/about.jpg) center 0;
+	background-size:cover;
+	box-sizing: border-box;
+}
+
+.index-immersive-exp {
+	background:url(/img/solar_panel.jpg) left 0;
+	background-color:black;
+	background-size:auto 100%;
+	background-repeat: no-repeat;
+	box-sizing: border-box;
+	color:white;
+}
+
+.index-santa {
+/*	background:url(/img/santa-1840_720.jpg) center bottom; */
+	background:url(/img/santa.svg) center bottom;
+	background-size:auto 100%;
+	background-size:cover;
+	box-sizing: border-box;
+	color:white;
+}
+
+.intro-nanosat {
+  display: table;
+  width: 100%;
+  height: 50%;
+  padding: 100px 0;
+  text-align: center;
+  color: white;
+  background: url(../img/intro-nanosat.jpg) no-repeat right center;
+  background-color: white;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+}
+
+.intro-apps {
+  display: table;
+  width: 100%;
+  height: 50%;
+  padding: 100px 0;
+  text-align: center;
+  color: white;
+  background: url(../img/apps_exploding_5.jpg) no-repeat center center;
+  background-color: white;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+}
+
+.intro-missions {
+  display: table;
+  width: 100%;
+  height: 100%;
+  padding: 100px 0;
+  text-align: center;
+  color: white;
+  background: url(../img/mission_launch_4.jpg) no-repeat center top;
+  background-color: white;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+}
+
+.ones-zeros {
+  display: table;
+  width: 100%;
+  height: 50%;
+  padding: 100px 0;
+  text-align: center;
+  color: white;
+  background: url(../img/Ones-and-Zeros.jpg) no-repeat center center;
+  background-color: white;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+}
+
+.color-white {
+	color:white;
+}
+
+.jumbo-gray-color {
+	background-color: #f7f7f7;
+}
+
+.jumbo-white-color {
+	background-color: #ffffff;
+}
+
+.hero___title {
+    color: #ffffff;
+/*    color: #e74c3c;  */
+    width: 14em;
+    max-width: 100%;
+/*    text-transform: uppercase;  */
+    font-weight: 600;
+    line-height: 1.4;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    margin-top: 0;
+}
+
+.hero___subtitle {
+    color: #ffffff;
+    width: 16em;
+    max-width: 100%;
+    font-weight: 400;
+    line-height: 1.4;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    margin-top: 0;
+}
+
+.fade {
+    opacity: 0;
+    transition: opacity 500ms;
+}
+
+.fade.in {
+    opacity: 1;
+}
+
+.bg-white {
+	background-color: #ffffff!important;
+}
+
+.navbar-white .navbar-brand {
+    color: #000000;
+}
+
+.box-shadow {
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, .05);
+}
+
+.pics-margin-bottom {
+    margin-bottom: 2rem;
+}
+
+.pics-margin-top {
+    margin-top: 2rem;
+}
+
+.month {
+    font-size: 16px;
+}
+
+.soft-color {
+    color:#6a6a6a;
+}
+
+.prices-display {
+  font-size: 2.7rem;
+  font-weight: 300;
+  line-height: 1.2;
+}
+
+.partners {
+	background-color: #fff;
+    text-align: center;
+    position: relative;
+    padding: 20px 0;
+    border-top: 1px solid #eae7e7;
+    border-bottom: 1px solid #eae7e7;
+    margin-top: -5px;
+    margin-bottom: 50px;
+}
+
+.hero_top {
+    padding-right: 0;
+    padding-left: 0;
+    border-radius: 0;
+	margin-top: 4rem;
+    box-sizing: border-box;
+	text-align: center!important;
+}
+
+.logo {
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	font-size: 1.3rem;
+	font-weight: 500;
+	text-align: left;
+    margin-bottom: -5px;
+    color:#4a4a4a;
+/*	line-height: 1.5; 
+	color: #212529;
+	background-color: #fff;  */
+}
+
+.solar_panel {
+	visibility: hidden;
+}
+
+.strong-box-shadow {
+	box-shadow:0px 0px 50px rgba(0,0,0,.5);
+}
+
+.checkout-footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+	background-color: #f7f7f7;
+    color: black;
+    text-align: center;
+}
+
+.footer-phone {
+	visibility: hidden;
+	display: none;
+}
+@media (min-width:768px){.footer-phone{visibility: visible; display: block;}}
+
+@media (min-width: 1400px) {
+  .modal-lg {
+    max-width: 1150px;
+  }
+}
+
+a.footy:link { color:#4a4a4a; text-decoration:none; font-weight:normal;  }
+a.footy:visited { color: #4a4a4a; text-decoration:none; font-weight:normal; }
+a.footy:hover { color: #4a4a4a; text-decoration:underline; font-weight:normal; }
+a.footy:active { color: #4a4a4a; text-decoration:none; font-weight:normal; }
+
+.footy {
+	font-size: small;
+	display: block;
+	margin: 0.5em;
+}
+
+@media (min-width:768px){.hero___title{word-spacing:.1em;font-size:2.8rem;margin-bottom:.8em}}
+@media (min-width:992px){.hero___title{margin-bottom:1em}}
+
+@media (min-width:768px){.hero___subtitle{word-spacing:.1em;font-size:2.0rem;margin-bottom:.8em}}
+@media (min-width:992px){.hero___subtitle{margin-bottom:1em}}
+
+@media (min-width:768px){.solar_panel{visibility: visible} .index-immersive-exp-phone{visibility: hidden; display: none}}
+
+.panel-login {
+	border-color: #ccc;
+	-webkit-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+	-moz-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+	box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+}
+.panel-login input[type="text"],.panel-login input[type="email"],.panel-login input[type="password"] {
+	height: 45px;
+	border: 1px solid #ddd;
+	font-size: 16px;
+	-webkit-transition: all 0.1s linear;
+	-moz-transition: all 0.1s linear;
+	transition: all 0.1s linear;
+}
+.panel-login input:hover,
+.panel-login input:focus {
+	outline:none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	border-color: #ccc;
+}
+.forgot-password {
+	text-decoration: underline;
+	color: #888;
+}
+.forgot-password:hover,
+.forgot-password:focus {
+	text-decoration: underline;
+	color: #666;
+}
+
