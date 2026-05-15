@@ -418,9 +418,11 @@ function onNodeSelect(tree_node) {
 	document.title = tree_node.data.path + " - MO Web Viewer";
 
 	drawer_func(xml_node);
-	draw_errors(xml_node);
 	draw_documentation(xml_node);
-	draw_comments(xml_node);
+	draw_errors(xml_node);
+	if (!xml_node.tagName.match(/mal:.*IP$/)) {
+		draw_comments(xml_node);
+	}
 
 	for (p in post_draw) {
 		post_draw[p]()

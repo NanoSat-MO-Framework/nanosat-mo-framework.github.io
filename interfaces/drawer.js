@@ -565,12 +565,40 @@ function draw_errors(node, target_div) {
 
 function draw_documentation(node, target_div) {
 	target_div = target_div || div_main
-	// ------------------ Documents ---------------------
+
+	// Group documentation elements by name, preserving insertion order
+	var groups = {}
+	var groupOrder = []
 	node.eachTag("mal:documentation", function (doc) {
-		var h2 = document.createElement("h2");
-		h2.innerHTML = doc.getAttribute("name")
-		target_div.appendChild(h2);
-		target_div.innerHTML += doc.textContent;
+		var name = doc.getAttribute("name")
+		if (!groups[name]) {
+			groups[name] = []
+			groupOrder.push(name)
+		}
+		groups[name].push(doc.textContent.trim())
+	})
+
+	groupOrder.forEach(function (name) {
+		var items = groups[name]
+
+		var h2 = document.createElement("h2")
+		// Pluralize if multiple items and name doesn't already end in 's'
+		h2.innerHTML = (items.length > 1 && name.slice(-1) !== 's') ? name + 's' : name
+		target_div.appendChild(h2)
+
+		if (items.length === 1) {
+			var p = document.createElement("p")
+			p.innerHTML = format_line_breaks(items[0])
+			target_div.appendChild(p)
+		} else {
+			var ol = document.createElement("ol")
+			items.forEach(function (text) {
+				var li = document.createElement("li")
+				li.innerHTML = format_line_breaks(text)
+				ol.appendChild(li)
+			})
+			target_div.appendChild(ol)
+		}
 	})
 }
 
