@@ -146,8 +146,53 @@ function d_mal_ip(node, target_div) {
 	tbl.appendChild(tblBody);
 	target_div.appendChild(tbl);
 
+	draw_type_signature_details(node, target_div);
+
 	// draw_errors(node,target_div)
 	// draw_comments(node,target_div)
+}
+
+function draw_type_signature_details(node, target_div) {
+	target_div = target_div || div_main
+
+	var messagesNodes = node.childrenByTag("mal:messages")
+	if (!messagesNodes || messagesNodes.length === 0) return
+
+	var msgNode = messagesNodes[0]
+	var msgChildren = $(msgNode).children().toArray()
+
+	var msgsWithFields = msgChildren.filter(function (msg) {
+		var fields = msg.childrenByTag("mal:field")
+		return fields && fields.length > 0
+	})
+
+	if (msgsWithFields.length === 0) return
+
+	var h2 = document.createElement("h2")
+	h2.innerHTML = "Type Signature Details"
+	target_div.appendChild(h2)
+
+	msgsWithFields.forEach(function (msg) {
+		var fields = msg.childrenByTag("mal:field")
+
+		var ul = document.createElement("ul")
+		ul.style.listStyleType = "disc"
+		ul.style.paddingLeft = "20px"
+		ul.style.margin = "4px 0"
+
+		fields.forEach(function (f) {
+			var li = document.createElement("li")
+			var name = f.getAttribute("name")
+			var comment = f.getAttribute("comment")
+			li.innerHTML = "<b>" + name + "</b>"
+			if (comment && comment !== "") {
+				li.innerHTML += " - " + comment
+			}
+			ul.appendChild(li)
+		})
+
+		target_div.appendChild(ul)
+	})
 }
 
 function d_mal_ip_header(tblBody, id, ip) {
