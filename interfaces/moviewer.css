@@ -1,6 +1,6 @@
-html * {
+#mainContainer * {
 	font-size: 1em;
-	font-family: Arial !important;
+	font-family: Arial;
 }
 
 html, body{
