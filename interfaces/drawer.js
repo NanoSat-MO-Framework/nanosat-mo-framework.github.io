@@ -123,6 +123,18 @@ function d_mal_composite(node, target_div) {
 
 function d_mal_ip(node, target_div) {
 	target_div = target_div || div_main
+
+	var h2 = document.createElement("h2")
+	h2.innerHTML = "Overview"
+	target_div.appendChild(h2)
+
+	var comment = node.getAttribute("comment")
+	if (comment && comment !== "") {
+		var p = document.createElement("p")
+		p.innerHTML = format_line_breaks(comment)
+		target_div.appendChild(p)
+	}
+
 	var tbl = document.createElement("table");
 	var tblBody = document.createElement("tbody");
 
