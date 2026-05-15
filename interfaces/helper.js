@@ -410,11 +410,9 @@ function onNodeSelect(tree_node) {
 	if (typeof drawer_func == 'undefined')
 		drawer_func = drawers["default"]
 
-	var nodePath = getUrlParameter("u");
-	if (typeof nodePath !== "undefined" && nodePath !== tree_node.data.path) {
-		var stateObj = {};
-		history.pushState(stateObj, tree_node.data.path, "?u=" + tree_node.data.path);
-	}
+	var branch = $("#branchSelect").val();
+	var newUrl = (branch ? "?branch=" + encodeURIComponent(branch) + "&" : "?") + "u=" + tree_node.data.path;
+	history.pushState({}, tree_node.data.path, newUrl);
 	document.title = tree_node.data.path + " - MO Web Viewer";
 
 	drawer_func(xml_node);

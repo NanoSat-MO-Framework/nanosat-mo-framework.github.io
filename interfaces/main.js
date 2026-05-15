@@ -155,6 +155,9 @@ function initTree() {
 
 	// jstree("destroy") calls off('.jstree') on the element, removing these
 	// handlers — so rebind them every time after a new instance is created.
+	$("#div_tree").on("ready.jstree", function () {
+		selectNodeFromURL();
+	});
 	$("#div_tree").on("hover_node.jstree", onHoverHandler);
 	$("#div_tree").on("dehover_node.jstree", onDehoverHandler);
 	$("#div_tree").on("select_node.jstree", onSelectHandler);
@@ -167,11 +170,13 @@ function fetchBranches(callback) {
 		branches.forEach(function (b) {
 			select.append($("<option>").val(b.name).text(b.name));
 		});
-		// Fall back to first branch if configActiveBranch doesn't exist
-		if (select.find("option[value='" + configActiveBranch + "']").length) {
-			select.val(configActiveBranch);
+		// Prefer branch from URL, then configActiveBranch, then first branch
+		var urlBranch = getUrlParameter("branch");
+		var target = urlBranch || configActiveBranch;
+		if (select.find("option[value='" + target + "']").length) {
+			select.val(target);
 		} else {
-			configActiveBranch = branches[0].name;
+			select.val(branches[0].name);
 		}
 		if (callback) callback(select.val());
 	}).fail(function () {
@@ -203,16 +208,26 @@ window.onload = function () {
 	});
 
 	$("#branchSelect").on("change", function () {
-		loadBranch($(this).val());
+		var branch = $(this).val();
+		var nodePath = getUrlParameter("u");
+		var newUrl = "?branch=" + encodeURIComponent(branch) + (nodePath ? "&u=" + nodePath : "");
+		history.pushState({}, branch, newUrl);
+		loadBranch(branch);
 	});
 
 	$("#searchbox").on('input', function (e) {
 		$("#div_tree").jstree(true).search($("#searchbox").val());
 	});
-
-	selectNodeFromURL();
 }
 
 $(window).on("popstate", function (e) {
-	selectNodeFromURL();
+	var branchParam = getUrlParameter("branch");
+	var currentBranch = $("#branchSelect").val();
+	if (branchParam && branchParam !== currentBranch) {
+		$("#branchSelect").val(branchParam);
+		loadBranch(branchParam);
+		// selectNodeFromURL() will be called by the ready.jstree handler after reload
+	} else {
+		selectNodeFromURL();
+	}
 })
