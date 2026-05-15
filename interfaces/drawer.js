@@ -386,6 +386,17 @@ function d_mal_service(node, target_div) {
 
 	target_div.appendChild(tbl);
 
+	var comment = node.getAttribute("comment")
+	if (comment && comment !== "") {
+		var h2 = document.createElement("h2")
+		h2.innerHTML = "Overview"
+		target_div.appendChild(h2)
+
+		var p = document.createElement("p")
+		p.innerHTML = format_line_breaks(comment)
+		target_div.appendChild(p)
+	}
+
 }
 
 function d_mal_enum(node, target_div) {

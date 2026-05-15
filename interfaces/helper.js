@@ -348,7 +348,6 @@ function comment_management_function(trigger_div_id, comment_div_id, reference_p
 }
 
 function hoverInToMiniview(node, element) {
-	$("#notification_bar").html(node.tagName)
 
 	var miniview = $("#div_miniview")
 	$(element).append(miniview)
@@ -418,7 +417,7 @@ function onNodeSelect(tree_node) {
 	drawer_func(xml_node);
 	draw_documentation(xml_node);
 	draw_errors(xml_node);
-	if (!xml_node.tagName.match(/mal:.*IP$/)) {
+	if (!xml_node.tagName.match(/mal:.*IP$/) && xml_node.tagName !== "mal:service") {
 		draw_comments(xml_node);
 	}
 
