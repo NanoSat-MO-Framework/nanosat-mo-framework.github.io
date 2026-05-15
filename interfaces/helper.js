@@ -262,14 +262,7 @@ function create_type_annotation(type_str, path_str, is_list) {
 			t_ann.addClass("link")
 			var xml_node = tree.nodePathMap[path_str].data.xml_node
 
-			t_ann.hover(function () {
-				hoverInToMiniview(xml_node, t_ann)
-			}, function () {
-				hoverOutOfMiniview(xml_node, t_ann)
-			})
-
 			t_ann.click(function () {
-				hoverOutOfMiniview(xml_node, t_ann)
 				selectNodeFromPath(path_str)
 			})
 		} else {

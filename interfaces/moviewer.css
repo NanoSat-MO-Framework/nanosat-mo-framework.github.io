@@ -205,6 +205,12 @@ iframe {
 	color: #0000FF;
 }
 
+.field-highlight {
+	background-color: #e8f2ff;
+	border-radius: 3px;
+	transition: background-color 0.15s;
+}
+
 .link:hover {
 	background-color: #DDFF99;
 	cursor: pointer;

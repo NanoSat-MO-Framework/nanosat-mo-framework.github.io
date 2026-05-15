@@ -196,6 +196,7 @@ function draw_type_signature_details(node, target_div) {
 			var li = document.createElement("li")
 			var name = f.getAttribute("name")
 			var comment = f.getAttribute("comment")
+			li.setAttribute("data-tsd-field", name)
 			li.innerHTML = "<b>" + name + "</b>"
 			if (comment && comment !== "") {
 				li.innerHTML += " - " + comment
@@ -244,29 +245,26 @@ function tr_mal_message(node, target_div, unique_sufix) {
 		li.innerHTML += " "
 
 		var elem_name = document.createElement("a");
+		var fieldName = field.getAttribute("name")
+		elem_name.innerHTML = fieldName
+		elem_name.setAttribute("data-field-name", fieldName)
+		elem_name.style.cursor = "default"
 
-		elem_name.innerHTML = field.getAttribute("name")
+		elem_name.addEventListener("mouseover", function () {
+			var name = this.getAttribute("data-field-name")
+			document.querySelectorAll('[data-tsd-field="' + name + '"]').forEach(function (el) {
+				el.classList.add("field-highlight")
+			})
+		})
+		elem_name.addEventListener("mouseout", function () {
+			var name = this.getAttribute("data-field-name")
+			document.querySelectorAll('[data-tsd-field="' + name + '"]').forEach(function (el) {
+				el.classList.remove("field-highlight")
+			})
+		})
+
 		li.appendChild(elem_name)
 
-		// comments view
-		if (field.getAttribute("comment") && field.getAttribute("comment") != "") {
-			// on hover comment
-			var comment_div = document.createElement("div");
-			var comment_div_id = "comment_" + field.getAttribute("name") + unique_sufix
-			var comment_li_id = "li_" + field.getAttribute("name") + unique_sufix
-			var elem_name_div_id = "elem_name_" + field.getAttribute("name") + unique_sufix
-
-			li.setAttribute("id", comment_li_id)
-			comment_div.setAttribute("id", comment_div_id);
-			elem_name.setAttribute("id", elem_name_div_id);
-			elem_name.setAttribute("class", "note");
-
-			comment_div.setAttribute("class", "comment");
-			comment_div.innerHTML = format_line_breaks(field.getAttribute("comment"))
-			li.appendChild(comment_div)
-
-			post_draw.push(comment_management_function(elem_name_div_id, comment_div_id, comment_li_id))
-		}
 		ul.appendChild(li)
 	}
 
@@ -347,14 +345,7 @@ function d_mal_service(node, target_div) {
 		postDrawCell = function (node, cell) {
 			return function () {
 				var jqCell = $("#" + cell.getAttribute("id"))
-				jqCell.hover(function () {
-					hoverInToMiniview(node, jqCell)
-				}, function () {
-					hoverOutOfMiniview(node, jqCell)
-				})
-
 				jqCell.click(function () {
-					hoverOutOfMiniview(node, jqCell)
 					selectNodeFromPath(node.tree_node.data.path)
 				})
 			}

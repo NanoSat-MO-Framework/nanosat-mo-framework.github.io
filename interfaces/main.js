@@ -158,8 +158,6 @@ function initTree() {
 	$("#div_tree").on("ready.jstree", function () {
 		selectNodeFromURL();
 	});
-	$("#div_tree").on("hover_node.jstree", onHoverHandler);
-	$("#div_tree").on("dehover_node.jstree", onDehoverHandler);
 	$("#div_tree").on("select_node.jstree", onSelectHandler);
 }
 
