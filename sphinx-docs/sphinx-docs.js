@@ -1,10 +1,16 @@
 // ── Configuration ─────────────────────────────────────────────────────────────
-// Change BRANCH to whichever branch you are actively editing.
-const BRANCH   = 'master';
+let BRANCH   = 'master';
 const REPO     = 'esa/nanosat-mo-framework';
 const DOCS_DIR = 'docs/source';
-const RAW_BASE = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${DOCS_DIR}/`;
-const GH_BLOB  = `https://github.com/${REPO}/blob/${BRANCH}/${DOCS_DIR}/`;
+const GH_API   = `https://api.github.com/repos/${REPO}`;
+let RAW_BASE = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${DOCS_DIR}/`;
+let GH_BLOB  = `https://github.com/${REPO}/blob/${BRANCH}/${DOCS_DIR}/`;
+
+function updateBranchConfig(branch) {
+    BRANCH   = branch;
+    RAW_BASE = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${DOCS_DIR}/`;
+    GH_BLOB  = `https://github.com/${REPO}/blob/${BRANCH}/${DOCS_DIR}/`;
+}
 
 let currentPage           = 'index';
 let parentPage            = 'index'; // top-level sidebar item that owns the current view
@@ -493,7 +499,6 @@ async function loadPage(page) {
     // sidebar stays expanded with the parent highlighted and the sub-item active.
 
     const content = document.getElementById('rst-content');
-    const crumb   = document.getElementById('breadcrumb');
     const rtdLink = document.getElementById('rtd-link');
 
     content.innerHTML = '<p class="rst-loading">Loading&hellip;</p>';
@@ -516,7 +521,7 @@ async function loadPage(page) {
                     res  = relRes;
                     page = relPage;
                     currentPage = page;
-                    history.replaceState({ page }, '', '#' + page);
+                    history.replaceState({ page, branch: BRANCH }, '', '?branch=' + encodeURIComponent(BRANCH) + '#' + page);
                 }
             }
         }
@@ -576,14 +581,13 @@ async function loadPage(page) {
         </div>`;
     }
 
-    crumb.textContent = page === 'index' ? '' : page.replace(/\//g, ' › ');
     rtdLink.href = RAW_BASE + page + '.rst';
     updateSidebar();
 }
 
 function navigate(page) {
     page = page.replace(/^\//, '').replace(/\.rst$/, '');
-    history.pushState({ page }, '', '#' + page);
+    history.pushState({ page, branch: BRANCH }, '', '?branch=' + encodeURIComponent(BRANCH) + '#' + page);
     loadPage(page);
 }
 
@@ -616,28 +620,81 @@ document.body.addEventListener('click', function(e) {
 // IDs (e.g. "consumer-test-tool-ctt") from being treated as page paths.
 window.addEventListener('popstate', e => {
     if (e.state && e.state.page) {
-        loadPage(e.state.page);
+        if (e.state.branch && e.state.branch !== BRANCH) {
+            initBranch(e.state.branch, e.state.page);
+        } else {
+            loadPage(e.state.page);
+        }
     }
 });
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 
-(async function init() {
-    // 1. Fetch index.rst to get the toctree structure
+async function fetchBranches(preferredBranch) {
+    try {
+        const res = await fetch(GH_API + '/branches?per_page=100');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const branches = await res.json();
+        const select = document.getElementById('branchSelect');
+        select.innerHTML = '';
+        branches.forEach(b => {
+            const opt = document.createElement('option');
+            opt.value = b.name;
+            opt.textContent = b.name;
+            select.appendChild(opt);
+        });
+        const target = (preferredBranch && branches.some(b => b.name === preferredBranch))
+            ? preferredBranch : BRANCH;
+        select.value = target;
+        updateBranchConfig(target);
+    } catch (_) {
+        const select = document.getElementById('branchSelect');
+        if (select && select.options.length === 0) {
+            const opt = document.createElement('option');
+            opt.value = BRANCH;
+            opt.textContent = BRANCH;
+            select.appendChild(opt);
+        }
+    }
+}
+
+async function initBranch(branch, page) {
+    updateBranchConfig(branch);
+    const select = document.getElementById('branchSelect');
+    if (select) select.value = branch;
+
+    document.getElementById('sidebar-nav').innerHTML = '<p class="sidebar-loading">Loading&hellip;</p>';
+
+    tocSections = [];
+    currentPage = 'index';
+    parentPage  = 'index';
+    currentPageSubEntries = [];
+
     try {
         const res = await fetch(RAW_BASE + 'index.rst');
         if (res.ok) tocSections = extractTocTree(await res.text());
-    } catch (_) { /* sidebar will be empty, content still loads */ }
+    } catch (_) {}
 
-    // 2. Replace filename-derived labels with the actual page titles (h1 headings),
-    //    fetching all pages in parallel so the sidebar matches ReadTheDocs exactly.
     const allEntries = tocSections.flatMap(s => s.entries);
     await Promise.all(allEntries.map(async entry => {
         const title = await fetchPageTitle(entry.path);
         if (title) entry.label = title;
     }));
 
-    // 3. Load the initial page (also triggers first sidebar render)
-    const initPage = window.location.hash.slice(1) || 'index';
-    loadPage(initPage);
+    loadPage(page || 'index');
+}
+
+(async function init() {
+    const urlBranch = new URLSearchParams(window.location.search).get('branch');
+    const initPage  = window.location.hash.slice(1) || 'index';
+
+    await fetchBranches(urlBranch);
+
+    document.getElementById('branchSelect').addEventListener('change', function () {
+        const branch = this.value;
+        history.pushState({ page: 'index', branch }, '', '?branch=' + encodeURIComponent(branch));
+        initBranch(branch, 'index');
+    });
+
+    await initBranch(BRANCH, initPage);
 })();

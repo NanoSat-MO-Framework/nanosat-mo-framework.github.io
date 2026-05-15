@@ -1,39 +1,3 @@
-/* ── Top bar ──────────────────────────────────────────────────────────────── */
-
-#top-bar {
-    position: sticky;
-    top: 54px;
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    padding: 5px 16px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
-    font-size: 0.82em;
-    color: #6c757d;
-    min-height: 32px;
-}
-
-@media (min-width: 992px) {
-    #top-bar { top: 56px; }
-}
-
-#breadcrumb {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.top-bar-rtd {
-    margin-left: auto;
-    white-space: nowrap;
-    font-weight: 600;
-    color: #007bff;
-    text-decoration: none;
-    flex-shrink: 0;
-}
-.top-bar-rtd:hover { text-decoration: underline; }
 
 /* ── Page layout: sidebar + content ──────────────────────────────────────── */
 
@@ -48,20 +12,78 @@
     width: 300px;
     flex-shrink: 0;
     position: sticky;
-    /* navbar 54px + top-bar 32px */
-    top: 86px;
-    height: calc(100vh - 86px);
+    top: 54px;
+    height: calc(100vh - 54px);
     overflow-y: auto;
     border-right: 1px solid #dee2e6;
     background: #fff;
+    display: flex;
+    flex-direction: column;
 }
 
 @media (min-width: 992px) {
-    #sidebar { top: 88px; height: calc(100vh - 88px); }
+    #sidebar { top: 56px; height: calc(100vh - 56px); }
 }
+
+#sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+}
+
+#sidebar-rtd {
+    padding: 10px 20px;
+    border-top: 1px solid #f0f0f0;
+    font-size: 0.82em;
+    flex-shrink: 0;
+}
+
+#sidebar-rtd a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+#sidebar-rtd a:hover { text-decoration: underline; }
 
 @media (max-width: 767px) {
     #sidebar { display: none; }
+}
+
+#branch-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+#branch-selector label {
+    font-size: 0.72em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6c757d;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-bottom: 0;
+}
+
+#branch-selector select {
+    width: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-size: 0.82em;
+    color: #4a4a4a;
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+    box-sizing: border-box;
+}
+
+#branch-selector select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
 }
 
 .sidebar-header {

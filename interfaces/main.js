@@ -168,7 +168,6 @@ function fetchBranches(callback) {
 		branches.forEach(function (b) {
 			select.append($("<option>").val(b.name).text(b.name));
 		});
-		// Prefer branch from URL, then configActiveBranch, then first branch
 		var urlBranch = getUrlParameter("branch");
 		var target = urlBranch || configActiveBranch;
 		if (select.find("option[value='" + target + "']").length) {
@@ -179,6 +178,10 @@ function fetchBranches(callback) {
 		if (callback) callback(select.val());
 	}).fail(function () {
 		console.error("Could not fetch branch list from GitHub API.");
+		var select = $("#branchSelect");
+		select.empty();
+		select.append($("<option>").val(configActiveBranch).text(configActiveBranch));
+		if (callback) callback(configActiveBranch);
 	});
 }
 
