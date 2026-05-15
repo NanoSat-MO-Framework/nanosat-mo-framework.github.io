@@ -55,7 +55,7 @@ iframe {
 }
 
 #div_left_panel {
-	width: 20%;
+	width: 350px;
 	height: 100%;
 	float: left;
 	overflow: auto;

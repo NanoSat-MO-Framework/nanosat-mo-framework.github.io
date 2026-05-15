@@ -3,26 +3,25 @@
 
 #page-layout {
     display: flex;
-    align-items: flex-start;
+    height: calc(100vh - 54px);
+    overflow: hidden;
+}
+
+@media (min-width: 992px) {
+    #page-layout { height: calc(100vh - 56px); }
 }
 
 /* ── Sidebar ──────────────────────────────────────────────────────────────── */
 
 #sidebar {
-    width: 300px;
+    width: 350px;
     flex-shrink: 0;
-    position: sticky;
-    top: 54px;
-    height: calc(100vh - 54px);
+    height: 100%;
     overflow-y: auto;
     border-right: 1px solid #dee2e6;
     background: #fff;
     display: flex;
     flex-direction: column;
-}
-
-@media (min-width: 992px) {
-    #sidebar { top: 56px; height: calc(100vh - 56px); }
 }
 
 #sidebar-nav {
@@ -49,36 +48,53 @@
     #sidebar { display: none; }
 }
 
+#sidebar-resizer {
+    width: 4px;
+    flex-shrink: 0;
+    align-self: stretch;
+    cursor: ew-resize;
+    background-color: transparent;
+    transition: background-color 0.12s;
+}
+
+#sidebar-resizer:hover,
+#sidebar-resizer.resizing {
+    background-color: #dee2e6;
+}
+
 #branch-selector {
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
     border-bottom: 1px solid #f0f0f0;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 #branch-selector label {
-    font-size: 0.72em;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    font-size: 0.85em;
     color: #6c757d;
     white-space: nowrap;
     flex-shrink: 0;
+    line-height: 1;
     margin-bottom: 0;
+    align-self: center;
 }
 
 #branch-selector select {
     width: 100%;
     border: 1px solid #dee2e6;
     border-radius: 4px;
-    padding: 3px 6px;
-    font-size: 0.82em;
+    padding: 4px 8px;
+    font-size: 0.85em;
     color: #4a4a4a;
     background: #fff;
     cursor: pointer;
     outline: none;
     box-sizing: border-box;
+    margin: 0;
+    vertical-align: middle;
 }
 
 #branch-selector select:focus {
@@ -184,9 +200,12 @@
 #rst-wrapper {
     flex: 1;
     min-width: 0;
+    height: 100%;
+    overflow-y: auto;
     display: flex;
     justify-content: flex-start;
     padding: 32px 40px 64px;
+    box-sizing: border-box;
 }
 
 #rst-content {

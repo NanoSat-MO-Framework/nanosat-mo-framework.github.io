@@ -698,3 +698,33 @@ async function initBranch(branch, page) {
 
     await initBranch(BRANCH, initPage);
 })();
+
+// ── Sidebar resize ────────────────────────────────────────────────────────────
+(function () {
+    const resizer = document.getElementById('sidebar-resizer');
+    const sidebar = document.getElementById('sidebar');
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', function () {
+        isResizing = true;
+        resizer.classList.add('resizing');
+        document.body.style.cursor = 'ew-resize';
+        document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', function (e) {
+        if (!isResizing) return;
+        const width = e.clientX;
+        if (width > 150 && width < 700) {
+            sidebar.style.width = width + 'px';
+        }
+    });
+
+    document.addEventListener('mouseup', function () {
+        if (!isResizing) return;
+        isResizing = false;
+        resizer.classList.remove('resizing');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+    });
+})();
