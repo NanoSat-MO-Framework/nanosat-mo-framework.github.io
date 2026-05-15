@@ -196,7 +196,7 @@ function draw_type_signature_details(node, target_div) {
 			var li = document.createElement("li")
 			var name = f.getAttribute("name")
 			var comment = f.getAttribute("comment")
-			li.setAttribute("data-tsd-field", name)
+			li.setAttribute("data-tsd-field", msg.tagName + "_" + name)
 			li.innerHTML = "<b>" + name + "</b>"
 			if (comment && comment !== "") {
 				li.innerHTML += " - " + comment
@@ -245,20 +245,20 @@ function tr_mal_message(node, target_div, unique_sufix) {
 		li.innerHTML += " "
 
 		var elem_name = document.createElement("a");
-		var fieldName = field.getAttribute("name")
-		elem_name.innerHTML = fieldName
-		elem_name.setAttribute("data-field-name", fieldName)
+		var fieldKey = node.tagName + "_" + field.getAttribute("name")
+		elem_name.innerHTML = field.getAttribute("name")
+		elem_name.setAttribute("data-field-key", fieldKey)
 		elem_name.style.cursor = "default"
 
 		elem_name.addEventListener("mouseover", function () {
-			var name = this.getAttribute("data-field-name")
-			document.querySelectorAll('[data-tsd-field="' + name + '"]').forEach(function (el) {
+			var key = this.getAttribute("data-field-key")
+			document.querySelectorAll('[data-tsd-field="' + key + '"]').forEach(function (el) {
 				el.classList.add("field-highlight")
 			})
 		})
 		elem_name.addEventListener("mouseout", function () {
-			var name = this.getAttribute("data-field-name")
-			document.querySelectorAll('[data-tsd-field="' + name + '"]').forEach(function (el) {
+			var key = this.getAttribute("data-field-key")
+			document.querySelectorAll('[data-tsd-field="' + key + '"]').forEach(function (el) {
 				el.classList.remove("field-highlight")
 			})
 		})
