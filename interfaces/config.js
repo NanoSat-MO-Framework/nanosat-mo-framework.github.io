@@ -2,20 +2,16 @@
 	This file should contain only deployment specific configuration.
 */
 
-/**
-	The array below contains the list of loaded XML files.
-	It should be configured appropriately in each MO Viewer instance.
-	The files shall be listed in dependency order (i.e. MAL spec comes first).
-*/
-var configServiceDefFiles = [
-	"https://raw.githubusercontent.com/esa/nanosat-mo-framework/dev/core/mo-services-xml/src/main/resources/xml/ServiceDefMAL.xml",
-	"https://raw.githubusercontent.com/esa/nanosat-mo-framework/dev/core/mo-services-xml/src/main/resources/xml/ServiceDefCOM-nmf.xml",
-	"https://raw.githubusercontent.com/esa/CCSDS_MO_XML/development/MO_XML/src/main/resources/xml/ServiceDefCommon.xml",
-	"https://raw.githubusercontent.com/esa/CCSDS_MO_XML/development/MO_XML/src/main/resources/xml/ServiceDefMC.xml",
-	"https://raw.githubusercontent.com/esa/nanosat-mo-framework/phi-sat-2/core/mo-services-xml/src/main/resources/xml/ServiceDefPLATFORM.xml",
-	"https://raw.githubusercontent.com/esa/nanosat-mo-framework/dev/core/mo-services-xml/src/main/resources/xml/ServiceDefSM.xml",
-	"https://raw.githubusercontent.com/esa/nanosat-mo-framework/dev/core/mo-services-xml/src/main/resources/xml/ServiceDefMP-nmf.xml",
-];
+var NMF_REPO     = "esa/nanosat-mo-framework";
+var NMF_XML_PATH = "core/mo-services-xml/src/main/resources/xml";
+var GH_API       = "https://api.github.com/repos/" + NMF_REPO;
+var GH_RAW       = "https://raw.githubusercontent.com/" + NMF_REPO;
+
+// Branch shown by default on page load
+var configActiveBranch = "master";
+
+// Populated dynamically — do not edit by hand
+var configServiceDefFiles = [];
 
 var configServiceBookFiles = {
 	"MAL": {pdfFilePath:		"pdf/ServiceDefMAL.xml-521x0b2e1.pdf",		name:"521x0b2e1", icon:"book"},

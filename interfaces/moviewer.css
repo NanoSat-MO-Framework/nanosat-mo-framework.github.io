@@ -91,9 +91,49 @@ iframe {
 	box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
 }
 
+#div_branch_parent {
+	width: 100%;
+	padding: 8px 12px;
+	border-bottom: 1px solid #f0f0f0;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+#div_branch_parent label {
+	font-size: 0.85em;
+	color: #6c757d;
+	white-space: nowrap;
+	flex-shrink: 0;
+	line-height: 1;
+	margin-bottom: 0;
+	align-self: center;
+}
+
+#branchSelect {
+	width: 100%;
+	border: 1px solid #dee2e6;
+	border-radius: 4px;
+	padding: 4px 8px;
+	font-size: 0.85em;
+	color: #4a4a4a;
+	background: #fff;
+	cursor: pointer;
+	outline: none;
+	box-sizing: border-box;
+	margin: 0;
+	vertical-align: middle;
+}
+
+#branchSelect:focus {
+	border-color: #007bff;
+	box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+}
+
 #div_tree_parent {
 	width: 100%;
-	height: calc(100% - 41px);
+	height: calc(100% - 82px);
 	float: left;
 	overflow: auto;
 	scrollbar-width: none;
@@ -220,7 +260,6 @@ iframe {
 
 /* ── Sidebar styling (matching sphinx-docs look & feel) ──────────────────── */
 
-/* jsTree anchor base style */
 .jstree-default a.jstree-anchor {
 	color: #4a4a4a;
 	border-radius: 0 !important;
@@ -231,7 +270,6 @@ iframe {
 	transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
 
-/* jsTree hover */
 .jstree-default a.jstree-hovered {
 	background: #f0f7ff !important;
 	color: #007bff !important;
@@ -240,7 +278,6 @@ iframe {
 	border-left-color: #b8d9ff !important;
 }
 
-/* jsTree selected / active */
 .jstree-default a.jstree-clicked {
 	background: #e8f2ff !important;
 	color: #007bff !important;

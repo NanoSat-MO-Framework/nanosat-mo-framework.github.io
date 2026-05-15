@@ -128,24 +128,21 @@ function onSelectHandler(event, data) {
 	onNodeSelect(data.node)
 }
 
-window.onload = function () {
-	div_tree = document.getElementById('div_tree');
-	div_main = document.getElementById('div_main');
-
-	$("#div_tree").on("hover_node.jstree", onHoverHandler);
-	$("#div_tree").on("dehover_node.jstree", onDehoverHandler);
-	$("#div_tree").on("select_node.jstree", onSelectHandler);
-
+function initTree() {
 	tree = {}
 	tree.nodePathMap = []
 	tree.nameMap = {}
 	tree.data = []
 	loadMoSpecs();
 
+	if ($.jstree.reference("#div_tree")) {
+		$("#div_tree").jstree("destroy");
+	}
+
 	$("#div_tree").jstree({
 		"core": {
-			"multiple": false, // No multiselection
-			"animation": false, // No animation
+			"multiple": false,
+			"animation": false,
 			"data": tree.data
 		},
 		"search": {
@@ -154,6 +151,59 @@ window.onload = function () {
 			"show_only_matches_children": true
 		},
 		"plugins": ["search"]
+	});
+
+	// jstree("destroy") calls off('.jstree') on the element, removing these
+	// handlers — so rebind them every time after a new instance is created.
+	$("#div_tree").on("hover_node.jstree", onHoverHandler);
+	$("#div_tree").on("dehover_node.jstree", onDehoverHandler);
+	$("#div_tree").on("select_node.jstree", onSelectHandler);
+}
+
+function fetchBranches(callback) {
+	$.getJSON(GH_API + "/branches?per_page=100", function (branches) {
+		var select = $("#branchSelect");
+		select.empty();
+		branches.forEach(function (b) {
+			select.append($("<option>").val(b.name).text(b.name));
+		});
+		// Fall back to first branch if configActiveBranch doesn't exist
+		if (select.find("option[value='" + configActiveBranch + "']").length) {
+			select.val(configActiveBranch);
+		} else {
+			configActiveBranch = branches[0].name;
+		}
+		if (callback) callback(select.val());
+	}).fail(function () {
+		console.error("Could not fetch branch list from GitHub API.");
+	});
+}
+
+function loadBranch(branch) {
+	$("#div_tree").html("<p style='padding:10px;color:#6c757d;font-size:0.85em'>Loading&hellip;</p>");
+	$.getJSON(GH_API + "/contents/" + NMF_XML_PATH + "?ref=" + encodeURIComponent(branch), function (files) {
+		configServiceDefFiles = files
+			.filter(function (f) { return f.name.endsWith(".xml"); })
+			.map(function (f) { return GH_RAW + "/" + branch + "/" + NMF_XML_PATH + "/" + f.name; });
+		document.getElementById("div_main").innerHTML = "";
+		initTree();
+	}).fail(function () {
+		$("#div_tree").html("<p style='padding:10px;color:#dc3545;font-size:0.85em'>No XML files found for branch <strong>" + branch + "</strong>.</p>");
+	});
+}
+
+window.onload = function () {
+	div_tree = document.getElementById('div_tree');
+	div_main = document.getElementById('div_main');
+
+	// Event handlers are bound inside initTree() so they survive branch switches.
+
+	fetchBranches(function (defaultBranch) {
+		loadBranch(defaultBranch);
+	});
+
+	$("#branchSelect").on("change", function () {
+		loadBranch($(this).val());
 	});
 
 	$("#searchbox").on('input', function (e) {
