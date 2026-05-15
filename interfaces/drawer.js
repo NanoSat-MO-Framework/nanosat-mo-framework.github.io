@@ -698,6 +698,22 @@ function draw_comments(node, target_div) {
 	})
 }
 
+function d_mal_area(node, target_div) {
+	target_div = target_div || div_main
+	draw_table(node, target_div)
+
+	var comment = node.getAttribute("comment")
+	if (comment && comment !== "") {
+		var h2 = document.createElement("h2")
+		h2.innerHTML = "Overview"
+		target_div.appendChild(h2)
+
+		var p = document.createElement("p")
+		p.innerHTML = format_line_breaks(comment)
+		target_div.appendChild(p)
+	}
+}
+
 function d_pdf(node, target_div) {
 	target_div = target_div || div_main
 
@@ -710,7 +726,7 @@ function d_pdf(node, target_div) {
 drawers = {}
 drawers["default"] = default_drawer
 
-// drawers["mal:area"] = d_mal_area
+drawers["mal:area"] = d_mal_area
 drawers["mal:service"] = d_mal_service
 
 drawers["mal:sendIP"] = d_mal_ip

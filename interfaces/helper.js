@@ -410,7 +410,7 @@ function onNodeSelect(tree_node) {
 	drawer_func(xml_node);
 	draw_documentation(xml_node);
 	draw_errors(xml_node);
-	if (!xml_node.tagName.match(/mal:.*IP$/) && xml_node.tagName !== "mal:service") {
+	if (!xml_node.tagName.match(/mal:.*IP$/) && xml_node.tagName !== "mal:service" && xml_node.tagName !== "mal:area") {
 		draw_comments(xml_node);
 	}
 
