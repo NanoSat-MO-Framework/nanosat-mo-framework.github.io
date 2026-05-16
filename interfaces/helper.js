@@ -67,12 +67,12 @@ COM_OBJECT_HEADER = ["Object Name", "Object Number", "Object Body Type", "Relate
 LONG_NAMES = {
 	"mal:errors": "Errors",
 	// interaction patterns
-	"mal:sendIP": "Send",
-	"mal:submitIP": "Submit",
-	"mal:requestIP": "Request",
-	"mal:invokeIP": "Invoke",
-	"mal:progressIP": "Progress",
-	"mal:pubsubIP": "Pub-Sub",
+	"mal:sendIP": "SEND",
+	"mal:submitIP": "SUBMIT",
+	"mal:requestIP": "REQUEST",
+	"mal:invokeIP": "INVOKE",
+	"mal:progressIP": "PROGRESS",
+	"mal:pubsubIP": "PUBLISH-SUBSCRIBE",
 	// COM
 	"com:events": "Events",
 	"com:objects": "Objects",
@@ -82,15 +82,15 @@ LONG_NAMES = {
 }
 
 MESSAGE_NAMES = {
-	"mal:send": "Send",
-	"mal:invoke": "Invoke",
-	"mal:acknowledgement": "Ack",
-	"mal:response": "Response",
-	"mal:request": "Request",
-	"mal:progress": "Progress",
-	"mal:update": "Update",
-	"mal:submit": "Submit",
-	"mal:publishNotify": "Publish / Notify",
+	"mal:send": "SEND",
+	"mal:invoke": "INVOKE",
+	"mal:acknowledgement": "ACK",
+	"mal:response": "RESPONSE",
+	"mal:request": "REQUEST",
+	"mal:progress": "PROGRESS",
+	"mal:update": "UPDATE",
+	"mal:submit": "SUBMIT",
+	"mal:publishNotify": "PUBLISH",
 }
 
 IN_OR_OUT = {

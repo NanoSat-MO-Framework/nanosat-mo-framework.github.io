@@ -140,18 +140,39 @@ function d_mal_ip(node, target_div) {
 
 	d_mal_ip_header(tblBody, node.getAttribute("name"), LONG_NAMES[node.tagName])
 
+	// For PUB-SUB: add Subscription Keys row between the header and the message table
+	if (node.tagName === "mal:pubsubIP") {
+		node.eachTag("mal:messages", function (msg) {
+			var subKeyEl = msg.childrenByTag("mal:subscriptionKeys")
+			if (!subKeyEl || subKeyEl.length === 0) return
+			subKeyEl = subKeyEl[0]
+			var fields = subKeyEl.childrenByTag("mal:field") || []
+			var keyStrings = fields.map(function (f) {
+				var typeEl = f.childrenByTag("mal:type")
+				var typeName = (typeEl && typeEl.length > 0) ? typeEl[0].getAttribute("name") : ""
+				return typeName + " " + f.getAttribute("name")
+			})
+			var skRow = document.createElement("tr")
+			skRow.appendChild(blue_td_with_text("Subscription Keys"))
+			skRow.appendChild(td_with_text(keyStrings.join("\n"), 2))
+			tblBody.appendChild(skRow)
+		})
+	}
+
 	// Body header
 	var row = document.createElement("tr");
 	row.appendChild(blue_td_with_text("Pattern Sequence"))
 	row.appendChild(blue_td_with_text("Message"))
-	row.appendChild(blue_td_with_text("Body Signature"))
+	row.appendChild(blue_td_with_text("Type Signature"))
 	tblBody.appendChild(row)
 
-	// messages, assumes only one message entry
+	// messages — skip subscriptionKeys (shown in header row above)
 	node.eachTag("mal:messages", function (msg) {
-		var msgChildren = $(msg).children()
-		msgChildren.each(function (c) {
-			tblBody.appendChild(tr_mal_message(msgChildren[c]))
+		var msgChildren = $(msg).children().toArray()
+		msgChildren.forEach(function (child) {
+			if (child.tagName !== "mal:subscriptionKeys") {
+				tblBody.appendChild(tr_mal_message(child))
+			}
 		})
 	})
 
