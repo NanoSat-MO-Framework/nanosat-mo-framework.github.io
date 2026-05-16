@@ -154,7 +154,7 @@ function d_mal_ip(node, target_div) {
 			})
 			var skRow = document.createElement("tr")
 			skRow.appendChild(blue_td_with_text("Subscription Keys"))
-			skRow.appendChild(td_with_text(keyStrings.join("\n"), 2))
+			skRow.appendChild(td_with_text(keyStrings.join("\n"), 3))
 			tblBody.appendChild(skRow)
 		})
 	}
@@ -163,6 +163,7 @@ function d_mal_ip(node, target_div) {
 	var row = document.createElement("tr");
 	row.appendChild(blue_td_with_text("Pattern Sequence"))
 	row.appendChild(blue_td_with_text("Message"))
+	row.appendChild(blue_td_with_text("Nullable"))
 	row.appendChild(blue_td_with_text("Type Signature"))
 	tblBody.appendChild(row)
 
@@ -233,13 +234,13 @@ function d_mal_ip_header(tblBody, id, ip) {
 	// Operation identifier
 	var row = document.createElement("tr");
 	row.appendChild(blue_td_with_text("Operation Identifier"))
-	row.appendChild(td_with_text(id, 2))
+	row.appendChild(td_with_text(id, 3))
 	tblBody.appendChild(row)
 
 	// Interaction Pattern
 	var row = document.createElement("tr");
 	row.appendChild(blue_td_with_text("Interaction Pattern"))
-	row.appendChild(gray_td_with_text(ip, 2))
+	row.appendChild(gray_td_with_text(ip, 3))
 	tblBody.appendChild(row)
 }
 
@@ -251,6 +252,12 @@ function tr_mal_message(node, target_div, unique_sufix) {
 	var tag = node.tagName
 	row.appendChild(gray_td_with_text(IN_OR_OUT[tag]))
 	row.appendChild(gray_td_with_text(MESSAGE_NAMES[tag]))
+
+	// Nullable column: one Yes/No per field based on canBeNull attribute
+	var nullableValues = node.childrenByTag("mal:field").map(function (f) {
+		return f.getAttribute("canBeNull") === "true" ? "Yes" : "No"
+	})
+	row.appendChild(gray_td_with_text(nullableValues.join("\n")))
 
 	var td = td_with_text("")
 
