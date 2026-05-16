@@ -298,7 +298,7 @@ function tr_mal_message(node, target_div, unique_sufix) {
 	row.appendChild(gray_td_with_text(MESSAGE_NAMES[tag]))
 
 	// Nullable column: one Yes/No per field based on canBeNull attribute
-	var nullableValues = node.childrenByTag("mal:field").map(function (f) {
+	var nullableValues = (node.childrenByTag("mal:field") || []).map(function (f) {
 		return f.getAttribute("canBeNull") === "true" ? "Yes" : "No"
 	})
 	row.appendChild(gray_td_with_text(nullableValues.join("\n")))
@@ -536,8 +536,8 @@ function d_com_objects(node, target_div, object_tag) {
 
 	node.eachTag(object_tag, function (obj) {
 		row = document.createElement("tr");
-		row.appendChild(td_with_text(obj.getAttribute("name")))
 		row.appendChild(td_with_text(obj.getAttribute("number")))
+		row.appendChild(td_with_text(obj.getAttribute("name")))
 
 		// object body type
 		var obj_body_type

@@ -61,7 +61,7 @@ ENUM_LIST_HEADER = ["Enumeration Value", "Numerical Value", "Comment"]
 
 ERROR_HEADER = ["Error", "Comment", "Extra Info - Type", "Extra Info - Comment"]
 
-COM_OBJECT_HEADER = ["Object Name", "Object Number", "Object Body Type", "Related points to", "Source points to"]
+COM_OBJECT_HEADER = ["Object Number", "Object Name", "Object Body Type", "Related link", "Source link"]
 
 LONG_NAMES = {
 	"mal:errors": "Errors",
