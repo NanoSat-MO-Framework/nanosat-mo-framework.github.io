@@ -225,8 +225,8 @@
     height: 100%;
     overflow-y: auto;
     display: flex;
-    justify-content: flex-start;
-    padding: 32px 40px 64px;
+    flex-direction: column;
+    padding: 32px 40px 0;
     box-sizing: border-box;
 }
 
@@ -364,3 +364,25 @@
 
 #rst-content .rubric { font-weight: 700; border-bottom: 1px solid #dee2e6; margin: 1.5em 0 0.5em; }
 #rst-content .math pre { background: #f4f4f4; color: #4a4a4a; font-style: italic; }
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+
+#rst-footer {
+    margin-top: auto;
+    padding: 20px 0 18px;
+    border-top: 1px solid #f0f0f0;
+    font-size: 0.8em;
+    color: #adb5bd;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+#rst-footer a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+#rst-footer a:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
