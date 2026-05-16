@@ -125,6 +125,7 @@ function onDehoverHandler(event, data) {
 }
 
 function onSelectHandler(event, data) {
+	$("#div_tree").jstree("toggle_node", data.node.id)
 	onNodeSelect(data.node)
 }
 
