@@ -227,9 +227,13 @@ function parseRST(text) {
                 if (!entries.length) return '';
                 const items = entries.map(e => {
                     const lm = e.match(/^(.+)\s+<(.+)>$/);
-                    if (lm) return `<li><a href="#" data-rst-page="${escHtml(lm[2])}" class="rst-page-link">${escHtml(lm[1])}</a></li>`;
+                    if (lm) {
+                        const resolved = resolvePath(currentPage, lm[2]);
+                        return `<li><a href="#" data-rst-page="${escHtml(resolved)}" class="rst-page-link">${escHtml(lm[1])}</a></li>`;
+                    }
+                    const resolved = resolvePath(currentPage, e);
                     const label = e.split('/').pop().replace(/[-_]/g, ' ');
-                    return `<li><a href="#" data-rst-page="${escHtml(e)}" data-auto-title="true" class="rst-page-link">${escHtml(label)}</a></li>`;
+                    return `<li><a href="#" data-rst-page="${escHtml(resolved)}" data-auto-title="true" class="rst-page-link">${escHtml(label)}</a></li>`;
                 });
                 return `<div class="toctree"><ul>${items.join('')}</ul></div>\n`;
             }
