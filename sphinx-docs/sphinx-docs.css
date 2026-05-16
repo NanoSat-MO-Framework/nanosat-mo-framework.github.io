@@ -355,6 +355,53 @@
 #rst-content .toctree li  { margin-bottom: 6px; }
 #rst-content .toctree a   { font-weight: 500; }
 
+/* ── Glossary ─────────────────────────────────────────────────────────────── */
+
+#rst-content .rst-glossary {
+    margin: 1em 0 1.4em;
+}
+
+#rst-content .rst-glossary dt {
+    font-weight: 700;
+    color: #2c3e50;
+    margin-top: 1em;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+#rst-content .rst-glossary dd {
+    margin: 4px 0 0 1.5em;
+    color: #4a4a4a;
+    line-height: 1.6;
+}
+
+/* ── Tables ───────────────────────────────────────────────────────────────── */
+
+#rst-content .rst-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0 1.4em;
+    font-size: 0.9em;
+}
+
+#rst-content .rst-table th,
+#rst-content .rst-table td {
+    border: 1px solid #dee2e6;
+    padding: 7px 12px;
+    text-align: left;
+    vertical-align: top;
+}
+
+#rst-content .rst-table th {
+    background: #f0f4f8;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+#rst-content .rst-table tr:nth-child(even) td {
+    background: #f8f9fa;
+}
+
 /* ── Figures ──────────────────────────────────────────────────────────────── */
 
 #rst-content .rst-figure { text-align: center; margin: 1.5em 0; }

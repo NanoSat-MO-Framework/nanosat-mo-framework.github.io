@@ -237,6 +237,84 @@ function parseRST(text) {
                 });
                 return `<div class="toctree"><ul>${items.join('')}</ul></div>\n`;
             }
+            case 'glossary': {
+                // Content after option-stripping: terms at indent 0, definitions indented.
+                const lines = d.content.split('\n');
+                const entries = [];
+                let terms = [], defLines = [];
+
+                const flush = () => {
+                    if (terms.length) entries.push({ terms: [...terms], def: defLines.join(' ').trim() });
+                    terms = []; defLines = [];
+                };
+
+                for (const line of lines) {
+                    if (line.trim() === '') { flush(); continue; }
+                    if (indentOf(line) === 0) {
+                        // A zero-indent line may be a new term stacked on the previous one
+                        // (RST allows multiple terms sharing one definition).
+                        if (defLines.length) flush();
+                        terms.push(line.trim());
+                    } else {
+                        defLines.push(line.trim());
+                    }
+                }
+                flush();
+                if (!entries.length) return '';
+
+                const sorted = d.options.some(o => /^:sorted:/.test(o));
+                if (sorted) entries.sort((a, b) =>
+                    a.terms[0].toLowerCase().localeCompare(b.terms[0].toLowerCase()));
+
+                let html = '<dl class="rst-glossary">';
+                for (const { terms: ts, def } of entries) {
+                    for (const t of ts) {
+                        const id = 'term-' + t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/, '');
+                        html += `<dt id="${escHtml(id)}">${applyInline(t)}</dt>`;
+                    }
+                    html += `<dd>${applyInline(def)}</dd>\n`;
+                }
+                return html + '</dl>\n';
+            }
+            case 'list-table': {
+                const headerRowsOpt = d.options.find(o => /^:header-rows:/.test(o));
+                const headerRows = headerRowsOpt
+                    ? parseInt(headerRowsOpt.replace(/^:header-rows:\s*/, ''), 10) || 0 : 0;
+                const widthsOpt = d.options.find(o => /^:widths:/.test(o));
+                const widthStr = widthsOpt ? widthsOpt.replace(/^:widths:\s*/, '').trim() : '';
+                const widths = (widthStr && widthStr !== 'auto')
+                    ? widthStr.split(/\s+/).map(Number).filter(n => !isNaN(n)) : null;
+
+                // Parse "* - cell\n  - cell\n  - cell\n* - ..." into rows of cells.
+                const rows = [];
+                let currentRow = null, currentCell = null;
+                for (const line of d.content.split('\n')) {
+                    if (/^\* - /.test(line)) {
+                        currentRow = []; rows.push(currentRow);
+                        currentCell = [line.slice(3).trim()]; currentRow.push(currentCell);
+                    } else if (/^  - /.test(line) && currentRow) {
+                        currentCell = [line.slice(3).trim()]; currentRow.push(currentCell);
+                    } else if (currentCell) {
+                        currentCell.push(line.trim());
+                    }
+                }
+                if (!rows.length) return '';
+
+                const total = widths ? widths.reduce((a, b) => a + b, 0) : 0;
+                let th = '<table class="rst-table">';
+                if (widths && total > 0) {
+                    th += '<colgroup>' +
+                        widths.map(w => `<col style="width:${Math.round(w / total * 100)}%">`).join('') +
+                        '</colgroup>';
+                }
+                rows.forEach((row, ri) => {
+                    const tag = ri < headerRows ? 'th' : 'td';
+                    th += '<tr>' + row.map(cell =>
+                        `<${tag}>${applyInline(cell.filter(Boolean).join(' '))}</${tag}>`
+                    ).join('') + '</tr>\n';
+                });
+                return th + '</table>\n';
+            }
             case 'rubric':
                 return `<p class="rubric">${applyInline(d.arg)}</p>\n`;
             case 'centered':
