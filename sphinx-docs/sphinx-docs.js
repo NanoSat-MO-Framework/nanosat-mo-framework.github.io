@@ -111,9 +111,9 @@ function applyInline(text) {
         .replace(/:ref:`([^`]+)`/g, (_, ref) =>
             stash(`<a href="#${ref.toLowerCase().replace(/[^a-z0-9]+/g, '-')}">${escHtml(ref)}</a>`))
         .replace(/:doc:`([^`<]+?)\s+<([^>]+)>`/g, (_, label, page) =>
-            stash(`<a href="#" data-rst-page="${escHtml(page)}" class="rst-page-link">${escHtml(label)}</a>`))
+            stash(`<a href="#" data-rst-page="${escHtml(resolvePath(currentPage, page))}" class="rst-page-link">${escHtml(label)}</a>`))
         .replace(/:doc:`([^`]+)`/g, (_, page) =>
-            stash(`<a href="#" data-rst-page="${escHtml(page)}" data-auto-title="true" class="rst-page-link">${escHtml(page.split('/').pop().replace(/[-_]/g, ' '))}</a>`));
+            stash(`<a href="#" data-rst-page="${escHtml(resolvePath(currentPage, page))}" data-auto-title="true" class="rst-page-link">${escHtml(page.split('/').pop().replace(/[-_]/g, ' '))}</a>`));
 
     // Non-link inline markup
     text = text
@@ -526,23 +526,69 @@ async function loadPage(page) {
     const prevPage = currentPage;
     currentPage = page;
 
-    // Decide whether this is a top-level toc entry or a child of the current parent.
-    // Child pages keep the parent's sidebar context (parentPage + currentPageSubEntries)
-    // so the parent item stays expanded and the active sub-item can be highlighted.
-    const topLevelPaths  = tocSections.flatMap(s => s.entries).map(e => e.path);
-    const isTopLevel     = page === 'index' || topLevelPaths.includes(page);
-    const isSubEntry     = currentPageSubEntries.some(e => e.path === page);
+    const topLevelPaths = tocSections.flatMap(s => s.entries).map(e => e.path);
+    const isTopLevel    = page === 'index' || topLevelPaths.includes(page);
+    const isSubEntry    = currentPageSubEntries.some(e => e.path === page);
+    // Whether we need to populate currentPageSubEntries from the fetched page's toctree.
+    let shouldPopulateSubEntries = false;
 
     if (isTopLevel) {
-        parentPage            = page;
-        currentPageSubEntries = []; // will be repopulated after fetch
-    } else if (!isSubEntry) {
-        // Unknown page (direct URL, browser back, etc.) — treat as its own parent
-        parentPage            = page;
+        parentPage = page;
         currentPageSubEntries = [];
+        shouldPopulateSubEntries = true;
+    } else if (isSubEntry) {
+        // Keep parentPage and currentPageSubEntries unchanged so the sidebar stays
+        // expanded with the parent highlighted and the active sub-item visible.
+    } else {
+        // Direct link to a page not yet in the sidebar context.
+        // The toctree uses "dir/index" entries (e.g. "mission-integration/index"), so we
+        // cannot rely on a simple prefix match. Instead, find any top-level entry that lives
+        // in the same directory as the current page — that is the logical parent.
+        const pageDir = page.includes('/') ? page.split('/').slice(0, -1).join('/') : '';
+        const inferredParent = pageDir
+            ? topLevelPaths.find(p => {
+                // Plain-name parent: "mission-integration" is a direct prefix.
+                if (page.startsWith(p + '/')) return true;
+                // Dir/index parent: "mission-integration/index" shares the same dir.
+                const pDir = p.includes('/') ? p.split('/').slice(0, -1).join('/') : '';
+                return pDir.length > 0 && pDir === pageDir;
+            })
+            : null;
+        if (inferredParent) {
+            parentPage = inferredParent;
+            try {
+                const parentRes = await fetch(RAW_BASE + inferredParent + '.rst');
+                if (parentRes.ok) {
+                    // parentDir is the *directory* of the parent file, not the file itself.
+                    // "mission-integration/index" → "mission-integration/"
+                    // "mission-integration"       → "mission-integration/"
+                    const parentDir = inferredParent.includes('/')
+                        ? inferredParent.split('/').slice(0, -1).join('/') + '/'
+                        : inferredParent + '/';
+                    const rawEntries = extractTocTree(await parentRes.text())
+                        .flatMap(s => s.entries)
+                        .map(e => ({
+                            label: e.label,
+                            path:  e.path.includes('/') ? e.path : parentDir + e.path
+                        }));
+                    currentPageSubEntries = rawEntries;
+                    await Promise.all(rawEntries.map(async entry => {
+                        const title = await fetchPageTitle(entry.path);
+                        if (title) entry.label = title;
+                    }));
+                } else {
+                    currentPageSubEntries = [];
+                }
+            } catch (_) {
+                currentPageSubEntries = [];
+            }
+        } else {
+            // Truly unknown page — treat as its own parent.
+            parentPage = page;
+            currentPageSubEntries = [];
+            shouldPopulateSubEntries = true;
+        }
     }
-    // isSubEntry: keep parentPage and currentPageSubEntries unchanged so the
-    // sidebar stays expanded with the parent highlighted and the sub-item active.
 
     const content = document.getElementById('rst-content');
     const rtdLink = document.getElementById('rtd-link');
@@ -605,9 +651,10 @@ async function loadPage(page) {
             }));
         }
 
-        // Populate sub-entries only when visiting a top-level (or unknown) page.
-        // When visiting a sub-entry we intentionally keep the parent's sub-entries.
-        if (!isSubEntry) {
+        // Populate sub-entries from the fetched page's own toctree only for top-level
+        // and truly unknown pages. Sub-entries and inferred-parent pages already have
+        // currentPageSubEntries set correctly above.
+        if (shouldPopulateSubEntries) {
             const pageDir = page.includes('/')
                 ? page.split('/').slice(0, -1).join('/') + '/'
                 : '';
@@ -625,7 +672,7 @@ async function loadPage(page) {
         }
 
     } catch (err) {
-        if (!isSubEntry) currentPageSubEntries = [];
+        if (shouldPopulateSubEntries) currentPageSubEntries = [];
         content.innerHTML = `<div class="rst-error">
             <strong>Could not load ${escHtml(page + '.rst')}</strong><br>
             <small>${escHtml(err.message)}</small><br><br>
