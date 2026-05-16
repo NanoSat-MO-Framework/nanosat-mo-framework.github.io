@@ -237,6 +237,8 @@ function parseRST(text) {
                 return `<p class="rubric">${applyInline(d.arg)}</p>\n`;
             case 'centered':
                 return `<p style="text-align:center"><strong>${applyInline(d.arg)}</strong></p>\n`;
+            case 'mermaid':
+                return `<div class="mermaid">${d.content}</div>\n`;
             case 'math':
                 return `<div class="admonition math"><pre>${escHtml(d.content || d.arg)}</pre></div>\n`;
             case 'literalinclude':
@@ -578,6 +580,12 @@ async function loadPage(page) {
         // Syntax-highlight all code blocks
         if (typeof hljs !== 'undefined') {
             content.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+        }
+
+        // Render mermaid diagrams
+        if (typeof mermaid !== 'undefined') {
+            const mermaidEls = [...content.querySelectorAll('.mermaid')];
+            if (mermaidEls.length) mermaid.run({ nodes: mermaidEls });
         }
 
         content.parentElement.scrollTo(0, 0);
