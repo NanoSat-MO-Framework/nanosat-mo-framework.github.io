@@ -55,8 +55,7 @@ COMMENT_MIN_WORDS = 12
 
 SERVICE_HEADER = ["Area Identifier", "Service Identifier", "Area Number", "Service Number", "Area Version"]
 
-OP_LIST_HEADER = ["Interaction Pattern", "Operation Identifier", "Operation Number", "Support in Replay",
-	"Capability Set"]
+OP_LIST_HEADER = ["Interaction Pattern", "Operation Identifier", "Operation Number", "Capability Set"]
 
 ENUM_LIST_HEADER = ["Enumeration Value", "Numerical Value", "Comment"]
 

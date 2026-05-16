@@ -391,6 +391,7 @@ function d_mal_service(node, target_div) {
 
 	// -------------------- second blue header ------------------
 	var header_row = tableRow(OP_LIST_HEADER);
+	header_row.cells[1].setAttribute("colspan", 2)
 	header_row.setAttribute("class", "blue_bg");
 	tblBody.appendChild(header_row)
 
@@ -417,8 +418,10 @@ function d_mal_service(node, target_div) {
 		var tRow = tableRow([//
 			LONG_NAMES[op[0].tagName],//
 			op[0].getAttribute("name"),//
-			op[0].getAttribute("number"), // area
-			op[0].getAttribute("supportInReplay"), op[0].parentNode.getAttribute("number")])
+			op[0].getAttribute("number"),//
+			op[0].parentNode.getAttribute("number")])
+
+		tRow.cells[1].setAttribute("colspan", 2)
 
 		// add link to the operation
 		var operationCell = tRow.cells[1]
@@ -445,7 +448,7 @@ function d_mal_service(node, target_div) {
 	// then it deletes the cell and increments the row span of the previous
 	var prevCapSetCell = null
 	for (var r = 0, row; row = tblBody.rows[r]; r++) {
-		var currCell = row.cells[4]
+		var currCell = row.cells[3]
 
 		// enters a new capability set
 		if (!prevCapSetCell || prevCapSetCell.innerHTML != currCell.innerHTML) {
@@ -453,7 +456,7 @@ function d_mal_service(node, target_div) {
 		} else {
 			var prevSpan = prevCapSetCell.getAttribute("rowspan") || 1
 			prevCapSetCell.setAttribute("rowspan", parseInt(prevSpan) + 1)
-			row.deleteCell(4)
+			row.deleteCell(3)
 		}
 
 	}
