@@ -17,6 +17,51 @@ let parentPage            = 'index'; // top-level sidebar item that owns the cur
 let tocSections           = []; // [{caption, entries:[{label,path}]}]
 let currentPageSubEntries = []; // [{label,path}] from the active top-level page's toctree
 
+// ── Search index ──────────────────────────────────────────────────────────────
+// Map of path -> { label, text } built in background after toctree loads.
+const searchIndex = new Map();
+
+function resolvePath(base, ref) {
+    if (ref.startsWith('/')) return ref.slice(1);
+    const dir = base.includes('/') ? base.split('/').slice(0, -1).join('/') + '/' : '';
+    const parts = (dir + ref).split('/');
+    const out = [];
+    for (const p of parts) { if (p === '..') out.pop(); else if (p && p !== '.') out.push(p); }
+    return out.join('/');
+}
+
+async function indexPage(path, label) {
+    if (searchIndex.has(path)) return;
+    searchIndex.set(path, { label: label || path, text: '' });
+    try {
+        const res = await fetch(RAW_BASE + path + '.rst');
+        if (!res.ok) return;
+        const text = await res.text();
+        searchIndex.set(path, { label: label || path, text });
+        // Discover sub-pages from toctree directives and index them too
+        const toctreeRe = /\.\. toctree::.*?\n((?:(?:[ \t]+[^\n]*)?\n)*)/g;
+        let m;
+        while ((m = toctreeRe.exec(text)) !== null) {
+            for (const line of m[1].split('\n')) {
+                const entry = line.trim();
+                if (!entry || entry.startsWith(':')) continue;
+                // Strip <Title> style: "Label <path>" → path
+                const titled = entry.match(/^.+<(.+)>$/);
+                const subPath = resolvePath(path, titled ? titled[1] : entry);
+                if (!searchIndex.has(subPath))
+                    indexPage(subPath, titled ? entry.replace(/<.+>/, '').trim() : entry);
+            }
+        }
+    } catch (_) {}
+}
+
+async function buildSearchIndex() {
+    searchIndex.clear();
+    const seed = [{ label: 'NanoSat MO Framework Documentation', path: 'index' }];
+    tocSections.forEach(({ entries }) => entries.forEach(e => seed.push(e)));
+    await Promise.all(seed.map(({ label, path }) => indexPage(path, label)));
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function escHtml(str) {
@@ -440,12 +485,11 @@ function buildSidebarHtml(sections, activePage, headings) {
 
     let html = '';
 
-    // Home entry — expanded when parentPage is index
-    const homeExpanded = parentPage === 'index';
+    // Home entry
+    const homeActive = parentPage === 'index';
     html += `<ul class="sidebar-list">
-      <li class="${homeExpanded ? 'active' : ''}">
-        <a href="#" data-rst-page="index" class="rst-page-link">&#8962;&ensp;Home</a>
-        ${homeExpanded ? sublist() : ''}
+      <li class="${homeActive ? 'active' : ''}">
+        <a href="#" data-rst-page="index" class="rst-page-link">NanoSat MO Framework Documentation</a>
       </li>
     </ul>`;
 
@@ -682,6 +726,7 @@ async function initBranch(branch, page) {
     }));
 
     loadPage(page || 'index');
+    buildSearchIndex(); // background — do not await
 }
 
 (async function init() {
@@ -694,6 +739,51 @@ async function initBranch(branch, page) {
         const branch = this.value;
         history.pushState({ page: 'index', branch }, '', '?branch=' + encodeURIComponent(branch));
         initBranch(branch, 'index');
+    });
+
+    document.getElementById('searchbox').addEventListener('input', function () {
+        const term = this.value.trim().toLowerCase();
+        if (!term) { updateSidebar(); return; }
+
+        // Collect label matches (preserving section structure)
+        const labelHitPaths = new Set();
+        let html = '';
+        if ('nanosat mo framework documentation'.includes(term)) {
+            labelHitPaths.add('index');
+            html += `<ul class="sidebar-list"><li>` +
+                `<a href="#" data-rst-page="index" class="rst-page-link">NanoSat MO Framework Documentation</a>` +
+                `</li></ul>`;
+        }
+        tocSections.forEach(function ({ caption, entries }) {
+            const matched = entries.filter(function (e) {
+                return e.label.toLowerCase().includes(term);
+            });
+            matched.forEach(function (e) { labelHitPaths.add(e.path); });
+            if (!matched.length) return;
+            if (caption) html += `<div class="sidebar-caption">${escHtml(caption)}</div>`;
+            html += '<ul class="sidebar-list">';
+            matched.forEach(function ({ label, path }) {
+                html += `<li><a href="#" data-rst-page="${escHtml(path)}" class="rst-page-link">${escHtml(label)}</a></li>`;
+            });
+            html += '</ul>';
+        });
+
+        // Content matches from search index (pages not already shown above)
+        const contentHits = [];
+        searchIndex.forEach(function ({ label, text }, path) {
+            if (!labelHitPaths.has(path) && text.toLowerCase().includes(term))
+                contentHits.push({ label, path });
+        });
+        if (contentHits.length) {
+            html += `<div class="sidebar-caption">In page content</div><ul class="sidebar-list">`;
+            contentHits.forEach(function ({ label, path }) {
+                html += `<li><a href="#" data-rst-page="${escHtml(path)}" class="rst-page-link">${escHtml(label)}</a></li>`;
+            });
+            html += '</ul>';
+        }
+
+        document.getElementById('sidebar-nav').innerHTML =
+            html || '<p class="sidebar-loading">No results.</p>';
     });
 
     await initBranch(BRANCH, initPage);
