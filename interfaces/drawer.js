@@ -147,14 +147,58 @@ function d_mal_ip(node, target_div) {
 			if (!subKeyEl || subKeyEl.length === 0) return
 			subKeyEl = subKeyEl[0]
 			var fields = subKeyEl.childrenByTag("mal:field") || []
-			var keyStrings = fields.map(function (f) {
+
+			var skTd = document.createElement("td")
+			skTd.setAttribute("colspan", 3)
+
+			fields.forEach(function (f, i) {
 				var typeEl = f.childrenByTag("mal:type")
 				var typeName = (typeEl && typeEl.length > 0) ? typeEl[0].getAttribute("name") : ""
-				return typeName + " " + f.getAttribute("name")
+				var fieldName = f.getAttribute("name")
+				var fieldKey = "mal:subscriptionKeys_" + fieldName
+
+				if (i > 0) skTd.appendChild(document.createElement("br"))
+
+				var typeSpan = document.createElement("span")
+				typeSpan.innerHTML = str_mal_node_type(f)
+				typeSpan.appendChild(document.createTextNode(" "))
+				var typeA = typeSpan.querySelector("a")
+				if (typeA) {
+					typeA.addEventListener("mouseover", function () {
+						document.querySelectorAll('[data-tsd-field="' + fieldKey + '"]').forEach(function (el) {
+							el.classList.add("field-highlight")
+						})
+					})
+					typeA.addEventListener("mouseout", function () {
+						document.querySelectorAll('[data-tsd-field="' + fieldKey + '"]').forEach(function (el) {
+							el.classList.remove("field-highlight")
+						})
+					})
+				}
+				skTd.appendChild(typeSpan)
+
+				var nameElem = document.createElement("a")
+				nameElem.innerHTML = fieldName
+				nameElem.setAttribute("data-field-key", fieldKey)
+				nameElem.style.cursor = "default"
+				nameElem.addEventListener("mouseover", function () {
+					var key = this.getAttribute("data-field-key")
+					document.querySelectorAll('[data-tsd-field="' + key + '"]').forEach(function (el) {
+						el.classList.add("field-highlight")
+					})
+				})
+				nameElem.addEventListener("mouseout", function () {
+					var key = this.getAttribute("data-field-key")
+					document.querySelectorAll('[data-tsd-field="' + key + '"]').forEach(function (el) {
+						el.classList.remove("field-highlight")
+					})
+				})
+				skTd.appendChild(nameElem)
 			})
+
 			var skRow = document.createElement("tr")
 			skRow.appendChild(blue_td_with_text("Subscription Keys"))
-			skRow.appendChild(td_with_text(keyStrings.join("\n"), 3))
+			skRow.appendChild(skTd)
 			tblBody.appendChild(skRow)
 		})
 	}
@@ -269,11 +313,25 @@ function tr_mal_message(node, target_div, unique_sufix) {
 		field = node.childrenByTag("mal:field")[f]
 
 		var li = document.createElement("li");
-		li.innerHTML = str_mal_node_type(field)// str_mal_field(field)
-		li.innerHTML += " "
+		var fieldKey = node.tagName + "_" + field.getAttribute("name")
+		li.innerHTML = str_mal_node_type(field)
+		li.appendChild(document.createTextNode(" "))
+
+		var typeA = li.querySelector("a")
+		if (typeA) {
+			typeA.addEventListener("mouseover", function () {
+				document.querySelectorAll('[data-tsd-field="' + fieldKey + '"]').forEach(function (el) {
+					el.classList.add("field-highlight")
+				})
+			})
+			typeA.addEventListener("mouseout", function () {
+				document.querySelectorAll('[data-tsd-field="' + fieldKey + '"]').forEach(function (el) {
+					el.classList.remove("field-highlight")
+				})
+			})
+		}
 
 		var elem_name = document.createElement("a");
-		var fieldKey = node.tagName + "_" + field.getAttribute("name")
 		elem_name.innerHTML = field.getAttribute("name")
 		elem_name.setAttribute("data-field-key", fieldKey)
 		elem_name.style.cursor = "default"

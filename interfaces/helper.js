@@ -295,6 +295,10 @@ function str_type(type, path_prefix, id_type) {
 	type_str += type.getAttribute(id_type)
 	path_str += path_prefix + type.getAttribute(id_type)
 
+	// remove MAL: prefix (MAL is the base type library, prefix is redundant)
+	if (type_str.indexOf("MAL:") == 0)
+		type_str = type_str.slice(4)
+
 	// remove current area from type
 	if (type.area) {
 		var area_prefix = type.area + ":"
