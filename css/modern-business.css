@@ -4,6 +4,10 @@
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-logomodern-business-nav/blob/master/LICENSE)
  */
 
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   padding-top: 54px;
   color:#4a4a4a;
