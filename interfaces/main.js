@@ -15,7 +15,7 @@ function mo_parse(xml_node, lvl, parent_tree_node) {
 		var new_tree_node = {
 			"text": display_name,
 			"children": [],
-			"icon": iconPath(xml_node.tagName),
+			"icon": xml_node.tagName === "mal:area" ? false : iconPath(xml_node.tagName),
 			"id": parent_tree_node == null ? display_name : (parent_tree_node.id + "_" + display_name),
 			"data": {
 				"path": parent_tree_node == null ? display_name : (parent_tree_node.data.path + "/" + display_name),
@@ -144,7 +144,8 @@ function initTree() {
 		"core": {
 			"multiple": false,
 			"animation": false,
-			"data": tree.data
+			"data": tree.data,
+			"themes": { "dots": false }
 		},
 		"search": {
 			"fuzzy": false,
