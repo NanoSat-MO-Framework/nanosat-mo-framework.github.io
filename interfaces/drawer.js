@@ -834,5 +834,23 @@ drawers["mal:composite"] = d_mal_composite
 drawers["com:objects"] = d_com_objects
 drawers["com:events"] = d_com_events
 
+drawers["mal:errors"] = function d_mal_errors(node, target_div) {
+	target_div = target_div || div_main
+
+	var tbl = document.createElement("table")
+	var tblBody = document.createElement("tbody")
+
+	var header_row = tableRow(ERROR_HEADER)
+	header_row.setAttribute("class", "blue_bg")
+	tblBody.appendChild(header_row)
+
+	node.eachTag("mal:error", function (err) {
+		tblBody.appendChild(tr_errorRef(err))
+	})
+
+	tbl.appendChild(tblBody)
+	target_div.appendChild(tbl)
+}
+
 
 drawers["book"] = d_pdf

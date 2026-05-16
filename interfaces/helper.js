@@ -64,7 +64,7 @@ ERROR_HEADER = ["Error", "Comment", "Extra Info - Type", "Extra Info - Comment"]
 COM_OBJECT_HEADER = ["Object Number", "Object Name", "Object Body Type", "Related link", "Source link"]
 
 LONG_NAMES = {
-	"mal:errors": "Errors",
+	"mal:errors": "MO Errors",
 	// interaction patterns
 	"mal:sendIP": "SEND",
 	"mal:submitIP": "SUBMIT",
@@ -76,7 +76,7 @@ LONG_NAMES = {
 	"com:events": "Events",
 	"com:objects": "Objects",
 	// Others
-	"mal:dataTypes": "Data",
+	"mal:dataTypes": "Data Structures",
 
 }
 
@@ -108,12 +108,12 @@ IN_OR_OUT = {
 // these nodes will be processed but skipped from the tree. their children will
 // be the children of these' nodes parents
 OMMITED_NODE_TYPES = ["mal:specification", "mal:capabilitySet", "mal:documentation", "mal:messages", "com:features",
-	"mal:errorRef", "mal:errors",
+	"mal:errorRef",
 	// "mal:dataTypes",
 	"mal:item", "mal:type", "mal:extends", "mal:field", "mal:extraInformation",
 	// IP related
 	"mal:invoke", "mal:acknowledgement", "mal:response", "mal:request", "mal:progress", "mal:update", "mal:submit",
-	"mal:publishNotify", "mal:send"
+	"mal:publishNotify", "mal:send", "mal:subscriptionKeys"
 	// COM related
 	, "com:object", "com:event"
 	, "com:objectType", "com:sourceObject", "com:relatedObject"

@@ -58,15 +58,10 @@ iframe {
 	width: 350px;
 	height: 100%;
 	float: left;
-	overflow: auto;
+	overflow: hidden;
 	background: #fff;
 	border-right: 1px solid #dee2e6;
 	box-sizing: border-box;
-	scrollbar-width: none;
-}
-
-#div_left_panel::-webkit-scrollbar {
-	display: none;
 }
 
 #div_search_parent {
@@ -137,15 +132,26 @@ iframe {
 
 #div_tree_parent {
 	width: 100%;
-	height: calc(100% - 82px);
+	height: calc(100% - 82px - 37px);
 	float: left;
 	overflow: auto;
-	scrollbar-width: none;
 }
 
-#div_tree_parent::-webkit-scrollbar {
-	display: none;
+#div_github_link {
+	padding: 10px 20px;
+	border-top: 1px solid #f0f0f0;
+	font-size: 0.82em;
+	flex-shrink: 0;
 }
+
+#div_github_link a {
+	color: #007bff;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+#div_github_link a:hover { text-decoration: underline; }
+
 
 #div_tree {
 	width: 100%;

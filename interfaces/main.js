@@ -10,7 +10,9 @@ function mo_parse(xml_node, lvl, parent_tree_node) {
 
 	// skip ommited node types
 	// Array.prototype.includes() is not used below for IE compatibility
-	if (OMMITED_NODE_TYPES.indexOf(xml_node.tagName) === -1) {
+	var _omit = OMMITED_NODE_TYPES.indexOf(xml_node.tagName) !== -1 ||
+		(xml_node.tagName === "mal:errors" && xml_node.parentNode && xml_node.parentNode.tagName !== "mal:area");
+	if (!_omit) {
 		var display_name = treeElementName(xml_node)
 		var new_tree_node = {
 			"text": display_name,
@@ -206,7 +208,13 @@ window.onload = function () {
 
 	// Event handlers are bound inside initTree() so they survive branch switches.
 
+	function updateGithubLink(branch) {
+		var url = "https://github.com/" + NMF_REPO + "/tree/" + encodeURIComponent(branch) + "/" + NMF_XML_PATH;
+		document.getElementById("github-link").href = url;
+	}
+
 	fetchBranches(function (defaultBranch) {
+		updateGithubLink(defaultBranch);
 		loadBranch(defaultBranch);
 	});
 
@@ -215,6 +223,7 @@ window.onload = function () {
 		var nodePath = getUrlParameter("u");
 		var newUrl = "?branch=" + encodeURIComponent(branch) + (nodePath ? "&u=" + nodePath : "");
 		history.pushState({}, branch, newUrl);
+		updateGithubLink(branch);
 		loadBranch(branch);
 	});
 
