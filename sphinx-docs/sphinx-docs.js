@@ -472,6 +472,46 @@ function parseRST(text) {
             html += '</ol>\n'; continue;
         }
 
+        // RST simple table: two or more "===+" column groups on one line
+        if (/^=+(\s+=+)+\s*$/.test(l)) {
+            // Extract column ranges from the border line
+            const colRanges = [];
+            for (let ci = 0; ci < l.length; ) {
+                if (l[ci] === '=') { const s = ci; while (ci < l.length && l[ci] === '=') ci++; colRanges.push([s, ci]); }
+                else ci++;
+            }
+            const sliceCols = row => colRanges.map(([s, e]) => (row.length > s ? row.slice(s, e > row.length ? row.length : e) : '').trim());
+
+            pos++; // consume first border
+            const sections = [];
+            let curSec = [];
+            sections.push(curSec);
+            while (pos < lines.length) {
+                const rl = lines[pos];
+                if (/^=+(\s+=+)+\s*$/.test(rl)) {
+                    pos++;
+                    curSec = []; sections.push(curSec);
+                    // Peek ahead: if nothing meaningful follows, this was the terminal border
+                    let j = pos;
+                    while (j < lines.length && lines[j].trim() === '') j++;
+                    if (j >= lines.length || /^=+(\s+=+)+\s*$/.test(lines[j])) break;
+                } else if (isBlank(rl)) {
+                    pos++;
+                } else {
+                    curSec.push(sliceCols(rl)); pos++;
+                }
+            }
+            // Two non-empty sections → first is header, second is body; one → all body
+            const nonEmpty = sections.filter(s => s.length > 0);
+            const hdrRows = nonEmpty.length >= 2 ? nonEmpty[0] : [];
+            const bdyRows = nonEmpty.length >= 2 ? nonEmpty[1] : (nonEmpty[0] || []);
+            let tbl = '<table class="rst-table">';
+            if (hdrRows.length) tbl += '<tr>' + hdrRows[0].map(c => `<th>${applyInline(c)}</th>`).join('') + '</tr>';
+            bdyRows.forEach(row => { tbl += '<tr>' + row.map(c => `<td>${applyInline(c)}</td>`).join('') + '</tr>'; });
+            html += tbl + '</table>\n';
+            continue;
+        }
+
         // paragraph
         const paraLines = [];
         while (pos < lines.length) {
