@@ -480,7 +480,11 @@ function parseRST(text) {
                 if (l[ci] === '=') { const s = ci; while (ci < l.length && l[ci] === '=') ci++; colRanges.push([s, ci]); }
                 else ci++;
             }
-            const sliceCols = row => colRanges.map(([s, e]) => (row.length > s ? row.slice(s, e > row.length ? row.length : e) : '').trim());
+            const sliceCols = row => colRanges.map(([s, e], i) => {
+                if (row.length <= s) return '';
+                const end = i === colRanges.length - 1 ? row.length : Math.min(colRanges[i + 1][0], row.length);
+                return row.slice(s, end).trim();
+            });
 
             pos++; // consume first border
             const sections = [];
@@ -517,6 +521,7 @@ function parseRST(text) {
         while (pos < lines.length) {
             const pl = lines[pos];
             if (isBlank(pl) || isAdorn(pl)) break;
+            if (/^=+(\s+=+)+\s*$/.test(pl)) break;
             if (/^\.\.\s/.test(pl.trimStart())) break;
             if (/^(\s*)([-*+]|\d+\.|#\.)\s/.test(pl)) break;
             paraLines.push(pl.trim()); pos++;
@@ -707,9 +712,11 @@ async function loadPage(page) {
             ? topLevelPaths.find(p => {
                 // Plain-name parent: "mission-integration" is a direct prefix.
                 if (page.startsWith(p + '/')) return true;
-                // Dir/index parent: "mission-integration/index" shares the same dir.
+                // Dir/index parent: same dir or an ancestor dir.
+                // e.g. "app-development/index" (pDir="app-development") matches
+                // both "app-development/foo" and "app-development/platform-services/foo".
                 const pDir = p.includes('/') ? p.split('/').slice(0, -1).join('/') : '';
-                return pDir.length > 0 && pDir === pageDir;
+                return pDir.length > 0 && (pDir === pageDir || pageDir.startsWith(pDir + '/'));
             })
             : null;
         if (inferredParent) {
@@ -717,17 +724,11 @@ async function loadPage(page) {
             try {
                 const parentRes = await fetch(RAW_BASE + inferredParent + '.rst');
                 if (parentRes.ok) {
-                    // parentDir is the *directory* of the parent file, not the file itself.
-                    // "mission-integration/index" → "mission-integration/"
-                    // "mission-integration"       → "mission-integration/"
-                    const parentDir = inferredParent.includes('/')
-                        ? inferredParent.split('/').slice(0, -1).join('/') + '/'
-                        : inferredParent + '/';
                     const rawEntries = extractTocTree(await parentRes.text())
                         .flatMap(s => s.entries)
                         .map(e => ({
                             label: e.label,
-                            path:  e.path.includes('/') ? e.path : parentDir + e.path
+                            path:  resolvePath(inferredParent, e.path)
                         }));
                     currentPageSubEntries = rawEntries;
                     await Promise.all(rawEntries.map(async entry => {
@@ -796,15 +797,11 @@ async function loadPage(page) {
         window.scrollTo(0, 0);
 
         // Replace auto-labeled :doc: link text with the real page title (H1).
-        const pageDir = page.includes('/')
-            ? page.split('/').slice(0, -1).join('/') + '/'
-            : '';
+        // data-rst-page is already fully resolved by applyInline → resolvePath().
         const autoLinks = [...content.querySelectorAll('a[data-auto-title]')];
         if (autoLinks.length) {
             await Promise.all(autoLinks.map(async link => {
-                const linkPage = link.dataset.rstPage;
-                const resolved = linkPage.includes('/') ? linkPage : pageDir + linkPage;
-                const title = await fetchPageTitle(resolved);
+                const title = await fetchPageTitle(link.dataset.rstPage);
                 if (title) link.textContent = title;
             }));
         }
@@ -813,14 +810,11 @@ async function loadPage(page) {
         // and truly unknown pages. Sub-entries and inferred-parent pages already have
         // currentPageSubEntries set correctly above.
         if (shouldPopulateSubEntries) {
-            const pageDir = page.includes('/')
-                ? page.split('/').slice(0, -1).join('/') + '/'
-                : '';
             const rawEntries = extractTocTree(text)
                 .flatMap(s => s.entries)
                 .map(e => ({
                     label: e.label,
-                    path:  e.path.includes('/') ? e.path : pageDir + e.path
+                    path:  resolvePath(page, e.path)
                 }));
             currentPageSubEntries = rawEntries;
             await Promise.all(rawEntries.map(async entry => {
