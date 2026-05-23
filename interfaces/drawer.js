@@ -313,7 +313,7 @@ function tr_mal_message(node, target_div, unique_sufix) {
 		field = node.childrenByTag("mal:field")[f]
 
 		var li = document.createElement("li");
-		var fieldKey = node.tagName + "_" + field.getAttribute("name")
+		let fieldKey = node.tagName + "_" + field.getAttribute("name")
 		li.innerHTML = str_mal_node_type(field)
 		li.appendChild(document.createTextNode(" "))
 
