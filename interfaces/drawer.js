@@ -840,12 +840,21 @@ drawers["mal:errors"] = function d_mal_errors(node, target_div) {
 	var tbl = document.createElement("table")
 	var tblBody = document.createElement("tbody")
 
-	var header_row = tableRow(ERROR_HEADER)
+	var header_row = tableRow(["Error Name", "Number", "Comment"])
 	header_row.setAttribute("class", "blue_bg")
 	tblBody.appendChild(header_row)
 
 	node.eachTag("mal:error", function (err) {
-		tblBody.appendChild(tr_errorRef(err))
+		var row = document.createElement("tr")
+		row.appendChild(td_with_text(err.getAttribute("name")))
+		row.appendChild(td_with_text(err.getAttribute("number")))
+		var comment = err.getAttribute("comment") || ""
+		if (comment.length >= TABLE_COMMENT_LENGTH_LIMIT) {
+			row.appendChild(td_table_comment(comment))
+		} else {
+			row.appendChild(td_with_text(comment))
+		}
+		tblBody.appendChild(row)
 	})
 
 	tbl.appendChild(tblBody)
