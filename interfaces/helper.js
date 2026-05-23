@@ -277,7 +277,7 @@ function create_type_annotation(type_str, path_str, is_list) {
 }
 
 function str_type(type, path_prefix, id_type) {
-	path_prefix = (typeof path_prefix == 'undefined') ? "Data/" : path_prefix
+	path_prefix = (typeof path_prefix == 'undefined') ? "Data Structures/" : path_prefix
 	var type_str = ""
 	var path_str = ""
 
