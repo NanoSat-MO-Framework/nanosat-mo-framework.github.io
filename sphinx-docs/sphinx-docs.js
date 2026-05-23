@@ -13,6 +13,7 @@ function updateBranchConfig(branch) {
 }
 
 let currentPage           = 'index';
+let _tabGroupCount        = 0;
 let parentPage            = 'index'; // top-level sidebar item that owns the current view
 let tocSections           = []; // [{caption, entries:[{label,path}]}]
 let currentPageSubEntries = []; // [{label,path}] from the active top-level page's toctree
@@ -325,6 +326,41 @@ function parseRST(text) {
                 return `<div class="admonition math"><pre>${escHtml(d.content || d.arg)}</pre></div>\n`;
             case 'literalinclude':
                 return `<pre><code>[included file: ${escHtml(d.arg)}]</code></pre>\n`;
+            case 'tabs': {
+                const tabLines = d.content.split('\n');
+                const tabs = [];
+                let curTab = null;
+                for (const line of tabLines) {
+                    const m = line.match(/^\.\.\s+tab::\s*(.*)/);
+                    if (m) {
+                        if (curTab) tabs.push(curTab);
+                        curTab = { name: m[1].trim(), lines: [] };
+                    } else if (curTab) {
+                        curTab.lines.push(line);
+                    }
+                }
+                if (curTab) tabs.push(curTab);
+                if (!tabs.length) return '';
+                const uid = 'tg' + (++_tabGroupCount);
+                let html = '<div class="rst-tabs">';
+                html += '<div class="rst-tabs-nav">';
+                tabs.forEach((tab, i) => {
+                    html += `<button class="rst-tab-btn${i === 0 ? ' active' : ''}" data-tabs="${uid}" data-idx="${i}">${escHtml(tab.name)}</button>`;
+                });
+                html += '</div>';
+                tabs.forEach((tab, i) => {
+                    let end = tab.lines.length;
+                    while (end > 0 && tab.lines[end - 1].trim() === '') end--;
+                    const trimmed = tab.lines.slice(0, end);
+                    const minInd = trimmed.reduce((m, l) => l.trim() ? Math.min(m, l.match(/^(\s*)/)[1].length) : m, Infinity);
+                    const body = trimmed.map(l => l.trim() ? l.slice(minInd === Infinity ? 0 : minInd) : '').join('\n');
+                    html += `<div class="rst-tab-pane${i === 0 ? ' active' : ''}" data-tabs="${uid}" data-idx="${i}">`;
+                    html += parseRST(body);
+                    html += '</div>';
+                });
+                html += '</div>';
+                return html;
+            }
             case 'contents': case 'include': case 'index': case 'only': case 'raw':
             case 'tabularcolumns': case 'automodule': case 'autoclass': case 'autofunction':
             case 'autosummary': case 'currentmodule': case 'sectionauthor':
@@ -775,6 +811,18 @@ function navigate(page) {
 // ── Global link handler (sidebar + content) ───────────────────────────────────
 
 document.body.addEventListener('click', function(e) {
+    // Tab switching
+    const tabBtn = e.target.closest('.rst-tab-btn');
+    if (tabBtn) {
+        const uid = tabBtn.dataset.tabs;
+        const idx = tabBtn.dataset.idx;
+        document.querySelectorAll(`.rst-tab-btn[data-tabs="${uid}"]`).forEach(b => b.classList.remove('active'));
+        document.querySelectorAll(`.rst-tab-pane[data-tabs="${uid}"]`).forEach(p => p.classList.remove('active'));
+        tabBtn.classList.add('active');
+        document.querySelector(`.rst-tab-pane[data-tabs="${uid}"][data-idx="${idx}"]`).classList.add('active');
+        return;
+    }
+
     // Page navigation links (toctree, :doc:, etc.)
     const pageLink = e.target.closest('.rst-page-link');
     if (pageLink) {
