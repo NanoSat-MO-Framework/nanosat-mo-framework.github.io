@@ -246,6 +246,7 @@ iframe {
 
 .blue_bg {
 	background-color: #00CCFF;
+	white-space: nowrap;
 }
 
 .gray_bg {

@@ -117,6 +117,8 @@ OMMITED_NODE_TYPES = ["mal:specification", "mal:capabilitySet", "mal:documentati
 	// COM related
 	, "com:object", "com:event"
 	, "com:objectType", "com:sourceObject", "com:relatedObject"
+	, "com:archiveUsage"
+	, "mal:error"
 ]
 
 OMMITED_TYPE_NAME_IN_TREE = ["mal:area", "mal:service", "mal:fundamental", "mal:attribute", "mal:composite", "mal:error",]

@@ -101,15 +101,22 @@ function d_mal_composite(node, target_div) {
 	if (node.childrenByTag("mal:field")) {
 		var header_row = tableRow(["Field", "Type", "Nullable", "Comment"]);
 		header_row.setAttribute("class", "blue_bg");
+		header_row.cells[2].style.whiteSpace = "nowrap"
 		tblBody.appendChild(header_row)
 
 		node.childrenByTag("mal:field").map(
 			function (f) {
 				row = document.createElement("tr");
-				row.appendChild(td_with_text(f.getAttribute("name")))
-				row.appendChild(td_with_text(str_mal_node_type(f)))
-				row.appendChild(td_with_text(f.getAttribute("canBeNull") == "true"
-					|| f.getAttribute("canBeNull") == null ? "Yes" : "No"))
+				var tdName = td_with_text(f.getAttribute("name"))
+				tdName.style.whiteSpace = "nowrap"
+				row.appendChild(tdName)
+				var tdType = td_with_text(str_mal_node_type(f))
+				tdType.style.whiteSpace = "nowrap"
+				row.appendChild(tdType)
+				var tdNullable = td_with_text(f.getAttribute("canBeNull") == "true"
+					|| f.getAttribute("canBeNull") == null ? "Yes" : "No")
+				tdNullable.style.whiteSpace = "nowrap"
+				row.appendChild(tdNullable)
 				var tdl = td_with_text(f.getAttribute("comment"));
 				tdl.style.textAlign = "left";
 				row.appendChild(tdl)
@@ -505,9 +512,13 @@ function d_mal_enum(node, target_div) {
 	for (it in node.childrenByTag("mal:item")) {
 		item = node.childrenByTag("mal:item", it)
 		row = document.createElement("tr");
-		row.appendChild(td_with_text(item.getAttribute("value")))
+		var tdValue = td_with_text(item.getAttribute("value"))
+		tdValue.style.whiteSpace = "nowrap"
+		row.appendChild(tdValue)
 		row.appendChild(td_with_text(item.getAttribute("nvalue")))
-		row.appendChild(td_with_text(item.getAttribute("comment")))
+		var tdComment = td_with_text(item.getAttribute("comment"))
+		tdComment.style.textAlign = "left"
+		row.appendChild(tdComment)
 		tblBody.appendChild(row);
 	}
 
@@ -641,6 +652,9 @@ function draw_errors(node, target_div) {
 
 		var header_row = tableRow(ERROR_HEADER);
 		header_row.setAttribute("class", "blue_bg");
+		header_row.cells[0].style.whiteSpace = "nowrap"
+		header_row.cells[2].style.whiteSpace = "nowrap"
+		header_row.cells[3].style.whiteSpace = "nowrap"
 		tblBody.appendChild(header_row)
 
 		errorsNode.eachTag("mal:errorRef", function (err) {
@@ -698,31 +712,27 @@ function tr_errorRef(node, target_div) {
 	var row = document.createElement("tr");
 
 	// ------------- error type
-	row.appendChild(td_with_text(str_mal_node_type(node, "")))
+	var tdError = td_with_text(str_mal_node_type(node, ""))
+	tdError.style.whiteSpace = "nowrap"
+	row.appendChild(tdError)
 
 	// ------------- comment
 	var comment = node.getAttribute("comment")
-	if (typeof comment != 'undefined' && comment != null) {
-
-		row.appendChild(td_table_comment(node.getAttribute("comment")))
-
-		// row.appendChild(td_with_text(comment))
-	} else {
-		row.appendChild(td_with_text(""))
-	}
+	var tdComment = td_with_text(typeof comment != 'undefined' && comment != null ? comment : "")
+	tdComment.style.textAlign = "left"
+	row.appendChild(tdComment)
 
 	if (node.childrenByTag("mal:extraInformation", 0)) {
 		var extraInfo = node.childrenByTag("mal:extraInformation", 0)
 		// ------------- Extra Info Type
-		row.appendChild(td_with_text(str_mal_node_type(extraInfo)))
+		var tdExtraType = td_with_text(str_mal_node_type(extraInfo))
+		tdExtraType.style.whiteSpace = "nowrap"
+		row.appendChild(tdExtraType)
 
 		// ------------- Extra Info Comment
-
-		if (extraInfo.getAttribute("comment").length < TABLE_COMMENT_LENGTH_LIMIT) {
-			row.appendChild(td_with_text(extraInfo.getAttribute("comment")))
-		} else {
-			row.appendChild(td_table_comment(extraInfo.getAttribute("comment")))
-		}
+		var tdExtraComment = td_with_text(extraInfo.getAttribute("comment"))
+		tdExtraComment.style.textAlign = "left"
+		row.appendChild(tdExtraComment)
 
 	} else {
 		row.appendChild(td_with_text("Not used", 2))
@@ -771,18 +781,22 @@ function draw_comments(node, target_div) {
 	if (typeof comment != 'undefined' && comment != null && comment != "") {
 		var h2 = document.createElement("h2");
 		h2.innerHTML = "Comment";
-
 		target_div.appendChild(h2);
-		target_div.innerHTML += format_line_breaks(comment) + "<br/>";
+
+		var p = document.createElement("p");
+		p.innerHTML = format_line_breaks(comment);
+		target_div.appendChild(p);
 	}
 
 	var note_counter = 1
 	node.eachTag("mal:extraInformation", function (ei) {
 		var h3 = document.createElement("h3");
 		h3.innerHTML = "Note " + note_counter;
-
 		target_div.appendChild(h3);
-		target_div.innerHTML += format_line_breaks(ei.getAttribute("comment")) + "<br/>";
+
+		var p = document.createElement("p");
+		p.innerHTML = format_line_breaks(ei.getAttribute("comment"));
+		target_div.appendChild(p);
 		note_counter++
 	})
 }
@@ -840,14 +854,14 @@ drawers["mal:errors"] = function d_mal_errors(node, target_div) {
 	var tbl = document.createElement("table")
 	var tblBody = document.createElement("tbody")
 
-	var header_row = tableRow(["Error Name", "Number", "Comment"])
+	var header_row = tableRow(["Number", "Error Name", "Comment"])
 	header_row.setAttribute("class", "blue_bg")
 	tblBody.appendChild(header_row)
 
 	node.eachTag("mal:error", function (err) {
 		var row = document.createElement("tr")
-		row.appendChild(td_with_text(err.getAttribute("name")))
 		row.appendChild(td_with_text(err.getAttribute("number")))
+		row.appendChild(td_with_text(err.getAttribute("name")))
 		var comment = err.getAttribute("comment") || ""
 		if (comment.length >= TABLE_COMMENT_LENGTH_LIMIT) {
 			row.appendChild(td_table_comment(comment))
