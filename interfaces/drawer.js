@@ -548,7 +548,9 @@ function d_com_objects(node, target_div, object_tag) {
 	node.eachTag(object_tag, function (obj) {
 		row = document.createElement("tr");
 		row.appendChild(td_with_text(obj.getAttribute("number")))
-		row.appendChild(td_with_text(obj.getAttribute("name")))
+		var tdName = td_with_text(obj.getAttribute("name"))
+		tdName.style.whiteSpace = "nowrap"
+		row.appendChild(tdName)
 
 		// object body type
 		var obj_body_type
@@ -557,7 +559,9 @@ function d_com_objects(node, target_div, object_tag) {
 		} else {
 			obj_body_type = "No body"
 		}
-		row.appendChild(td_with_text(obj_body_type))
+		var tdBodyType = td_with_text(obj_body_type)
+		tdBodyType.style.whiteSpace = "nowrap"
+		row.appendChild(tdBodyType)
 
 		// related & source
 		var handle_obj_ref = function (typeTag) {
