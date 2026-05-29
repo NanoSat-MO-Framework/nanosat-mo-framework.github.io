@@ -461,7 +461,25 @@ function parseRST(text) {
                 const li = lines[pos];
                 if (isBlank(li)) { pos++; continue; }
                 const lm = li.match(/^(\s*)(\d+\.|#\.)\s+(.*)/);
-                if (!lm || lm[1].length !== listIndent) break;
+                if (!lm || lm[1].length !== listIndent) {
+                    // RST allows an indented sub-block (nested list, paragraph,
+                    // code block, …) to belong to the preceding list item even
+                    // when separated by a blank line. Splice it into the last
+                    // <li> so the surrounding <ol> keeps numbering.
+                    if (!lm && indentOf(li) > listIndent && html.endsWith('</li>\n')) {
+                        const subLines = collectBlock(listIndent);
+                        const minInd = subLines.reduce(
+                            (m, ll) => ll.trim() ? Math.min(m, indentOf(ll)) : m,
+                            Infinity);
+                        const subBody = subLines
+                            .map(ll => ll.trim() ? ll.slice(minInd === Infinity ? 0 : minInd) : '')
+                            .join('\n');
+                        const subHtml = parseRST(subBody);
+                        html = html.slice(0, -('</li>\n'.length)) + subHtml + '</li>\n';
+                        continue;
+                    }
+                    break;
+                }
                 pos++;
                 let text = lm[3];
                 while (pos < lines.length && !isBlank(lines[pos]) && indentOf(lines[pos]) > listIndent + 1) {
