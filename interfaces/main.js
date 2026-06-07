@@ -15,6 +15,23 @@ function mo_parse(xml_node, lvl, parent_tree_node) {
 		prfx += ". "
 	}
 
+	// mal:diagram — create a single "Diagram" leaf node and skip SVG children
+	if (xml_node.tagName === "mal:diagram" && parent_tree_node !== null) {
+		var diagram_tree_node = {
+			"text": "Diagram",
+			"children": [],
+			"icon": iconPath("mal:diagram"),
+			"id": parent_tree_node.id + "_Diagram",
+			"data": {
+				"path": parent_tree_node.data.path + "/Diagram",
+				"xml_node": xml_node
+			}
+		}
+		parent_tree_node.children.push(diagram_tree_node)
+		tree.nodePathMap[diagram_tree_node.data.path] = diagram_tree_node
+		return
+	}
+
 	// skip ommited node types
 	// Array.prototype.includes() is not used below for IE compatibility
 	var _omit = OMMITED_NODE_TYPES.indexOf(xml_node.tagName) !== -1 ||

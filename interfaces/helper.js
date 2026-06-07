@@ -155,6 +155,8 @@ TAG_TO_ICON = {
 	//pdf
 	"book": "fff/book.png",
 	"book_red": "fff/book_red.png",
+
+	"mal:diagram": "fff/image.png",
 }
 
 function iconPath(tag) {

@@ -878,3 +878,25 @@ drawers["mal:errors"] = function d_mal_errors(node, target_div) {
 
 
 drawers["book"] = d_pdf
+
+drawers["mal:diagram"] = function d_mal_diagram(node, target_div) {
+	target_div = target_div || div_main
+
+	var svgChildren = node.childrenByTag("svg:svg")
+	if (!svgChildren || svgChildren.length === 0) return
+	var svgEl = svgChildren[0]
+
+	// Serialize and strip the svg: namespace prefix so the browser renders it
+	var svgStr = new XMLSerializer().serializeToString(svgEl)
+	svgStr = svgStr.replace(/<svg:/g, "<").replace(/<\/svg:/g, "</")
+	svgStr = svgStr.replace(/\s+xmlns:svg="[^"]*"/g, "")
+	if (svgStr.indexOf("xmlns=") === -1) {
+		svgStr = svgStr.replace(/^<svg\b/, '<svg xmlns="http://www.w3.org/2000/svg"')
+	}
+
+	var container = document.createElement("div")
+	container.style.overflow = "auto"
+	container.style.padding = "10px"
+	container.innerHTML = svgStr
+	target_div.appendChild(container)
+}
