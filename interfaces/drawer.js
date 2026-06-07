@@ -866,12 +866,9 @@ drawers["mal:errors"] = function d_mal_errors(node, target_div) {
 		var row = document.createElement("tr")
 		row.appendChild(td_with_text(err.getAttribute("number")))
 		row.appendChild(td_with_text(err.getAttribute("name")))
-		var comment = err.getAttribute("comment") || ""
-		if (comment.length >= TABLE_COMMENT_LENGTH_LIMIT) {
-			row.appendChild(td_table_comment(comment))
-		} else {
-			row.appendChild(td_with_text(comment))
-		}
+		var tdComment = td_with_text(err.getAttribute("comment") || "")
+		tdComment.style.textAlign = "left"
+		row.appendChild(tdComment)
 		tblBody.appendChild(row)
 	})
 
