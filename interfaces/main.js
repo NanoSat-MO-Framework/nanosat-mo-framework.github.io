@@ -1,3 +1,10 @@
+function hasChildTag(xml_node, tag) {
+	for (var i = 0; i < xml_node.childNodes.length; i++) {
+		if (xml_node.childNodes[i].tagName === tag) return true;
+	}
+	return false;
+}
+
 // Recursively generate a jsTree node structure from a given XML node
 function mo_parse(xml_node, lvl, parent_tree_node) {
 	lvl = lvl || 0
@@ -11,7 +18,9 @@ function mo_parse(xml_node, lvl, parent_tree_node) {
 	// skip ommited node types
 	// Array.prototype.includes() is not used below for IE compatibility
 	var _omit = OMMITED_NODE_TYPES.indexOf(xml_node.tagName) !== -1 ||
-		(xml_node.tagName === "mal:errors" && xml_node.parentNode && xml_node.parentNode.tagName !== "mal:area");
+		(xml_node.tagName === "mal:errors" && xml_node.parentNode && xml_node.parentNode.tagName !== "mal:area") ||
+		(xml_node.tagName === "com:events" && !hasChildTag(xml_node, "com:event")) ||
+		(xml_node.tagName === "com:objects" && !hasChildTag(xml_node, "com:object"));
 	if (!_omit) {
 		var display_name = treeElementName(xml_node)
 		var new_tree_node = {
