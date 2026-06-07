@@ -697,13 +697,13 @@ function draw_documentation(node, target_div) {
 
 		if (items.length === 1) {
 			var p = document.createElement("p")
-			p.innerHTML = format_line_breaks(items[0])
+			p.innerHTML = htmlize(items[0])
 			target_div.appendChild(p)
 		} else {
 			var ol = document.createElement("ol")
 			items.forEach(function (text) {
 				var li = document.createElement("li")
-				li.innerHTML = format_line_breaks(text)
+				li.innerHTML = htmlize(text)
 				ol.appendChild(li)
 			})
 			target_div.appendChild(ol)

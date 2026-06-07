@@ -208,6 +208,15 @@ function format_line_breaks(text) {
 	return text.replace(/\n/g, "\n<br/>")
 }
 
+// Like format_line_breaks, but if the text already contains HTML block elements
+// (e.g. <ol>, <li>) use it as-is so that newlines around those tags don't
+// become spurious <br/> nodes between list items.
+function htmlize(text) {
+	if (text == null) return null;
+	if (/<(ol|ul|li|p|div|h[1-6])[^>]*>/i.test(text)) return text;
+	return format_line_breaks(text);
+}
+
 // ------------------ Table helpers ----------------------
 
 function td_with_element(elem) {
